@@ -1,6 +1,6 @@
 <html xmlns:th="http://www.thymeleaf.org">
 
-<head>
+<head lang="en">
     <meta charset="UTF-8">
     <title>Sugar Removal Service</title>
 
@@ -8,8 +8,9 @@
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
     <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
     <script src="https://www.lactame.com/lib/openchemlib/5.6.1/openchemlib-full.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://code.jquery.com/jquery-latest.min.js"></script>
+
+    <script src="/js/power.js"></script>
 </head>
 <body>
 
@@ -22,28 +23,109 @@
 <img src="/img/pleasewait.gif" id="waitimg" style="display: none ; position: fixed; top:0;left:0;right:0;bottom:0;margin:auto;z-index: 2;"/>
 
 
+<div id="container">
 
 
-Need to do a dynamic page:
-First step: select input type (file, SMILES string, InChi string, Draw molecule)
--> Show the corresponding div
+    <div id="step1">
+        <h2>Choose sugar removal type</h2>
 
-Second step: choose deglycosylation type:
-- all (linear and circular sugars)
-- only linear sugars
-- only circular sugars
-- only terminal circular sugars
+        <div id="sugarType">
 
-Process (back to the controller)
+            <table>
+                <tr>
+                    <td><input class="cbSugarType" type="checkbox" name="All" id="stAll" onchange="uncheckPickingBoxes(this)"/> </td>
+                    <td><label for = "stAll">Remove all sugars</label></td>
 
-Draw the output
+                    <td><input class="cbSugarType" type="checkbox" name="OnlyRings" id="stOnlyRings" onchange="uncheckAllAndTerminalRingCheckbox(this)"/></td>
+                    <td><label for = "stOnlyRings">Remove ring sugars</label></td>
+                    <td><input class="cbSugarType" type="checkbox" name="OnlyLinear" id="stOnlyLinear" onchange="uncheckAllCheckbox(this)"/></td>
+                    <td><label for = "stOnlyLinear">Remove linear sugars</label></td>
+                    <td><input class="cbSugarType" type="checkbox" name="OnlyTerminalRings" id="stOnlyTermRings" onchange="unckeckAllAndRingCheckbox(this)"/></td>
+                    <td><label for = "stOnlyTermRings">Remove terminal ring sugars</label></td>
+                    <td><button class="choose-submission-type-button" onclick="fillSugarRemovalParams(this)" >Next: choose submission type</button></td>
+                </tr>
+            </table>
+        </div>
+
+        <div id="chooseSugarRemovalTypeFirst" style="display: none ;">
+            <h2 style=" color: red; ">Choose sugar removal type to submit your molecule(s)!</h2>
+        </div>
+
+
+    </div>
+
+
+
+    <div id="step2" style="display: none ;">
+        <h2>Select molecule input type</h2>
+
+        <table>
+            <tr>
+                <td><button type="button" class="input-choice-button" onclick="showFileInputDiv(this)"> File (SDF, MOL, SMI) </button></td>
+                <td><button type="button" class="input-choice-button" onclick="showSmilesPasteDiv(this)">Paste SMILES</button></td>
+                <td><button type="button" class="input-choice-button" onclick="showDrawMoleculeDiv(this)">Draw molecule</button></td>
+            </tr>
+        </table>
+    </div>
+
+    <div id="step3" > <!--Molecule input and submission-->
+        <div id="submitFile"  style="display: none ; ">
+            <p>submit file div</p>
+        </div>
+
+        <div id="smilesSubmission" style="display: none ; ">
+            <h2>Paste SMILES string</h2>
+            <form id="smilesUpload" method="POST" enctype="text/plain" action="/smiles" style="width: 80%; padding-left: 1%;">
+                <table>
+                    <tr><td>SMILES: </td><td><input type="text" name="smiles" cols="100" size="100" /></td></tr>
+                    <tr><td><small>All SMILES types accepted but stereochemistry and isotopes will be ignored</small></td><td><input type="submit" value="Upload & remove sugars" class="smiles-button" /></td></tr>
+                </table>
+
+            </form>
+            <div th:if="${smiles}" >
+                <p th:text="'Hello, ' + ${smiles} + '!'"></p>
+            </div>
+
+            <div th:if="${notSmiles}" id="errorDiv">
+
+                <p>The pasted string is empty or is not a SMILES</p>
+
+            </div>
+        </div>
+
+        <div id="oclContainer"  style="display: none ; ">
+            <h2>Draw molecule</h2>
+            <table>
+                <tr><td>
+                    <div id="editor" style="width: 500px; height:400px; border: solid; border-width:1px; position:relative;"></div>
+                    <script>
+                        var editor = OCL.StructureEditor.createEditor("editor");
+                    </script>
+
+                </td></tr>
+
+                <tr>
+                    <td>
+                        <button class="submit-mol-button-ocl"  >Upload and remove sugars</button> <!--style="font-size: 18px; font-min-size: 100%"-->
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+
+    </div>
+
+
+
+</div>
+
 
 
 <div id="bottom_content">
     <div id="foot">
         <p><strong>The Sugar Removal Service is an open source web application based fully on open data. Source and installation instructions are available at <a target="_blank" rel="noopener noreferrer"  href="https://github.com/mSorok/SugarRemovalWeb" style="color: chocolate">GitHub</a>.
             Please submit bug reports, feature requests and general issues through <a target="_blank" rel="noopener noreferrer"  href="https://github.com/mSorok/NPlsWeb/issues" style="color: chocolate">the issues tracker at GitHub</a>.</strong>
-            NaPLeS is developed and maintained by the <a target="_blank" rel="noopener noreferrer"  href="https://cheminf.uni-jena.de" style="color: chocolate">Steinbeck group</a> at the University Friedrich-Schiller in Jena, Germany.</p>
+            The Sugar Remover Service is developed and maintained by the <a target="_blank" rel="noopener noreferrer"  href="https://cheminf.uni-jena.de" style="color: chocolate">Steinbeck group</a> at the University Friedrich-Schiller in Jena, Germany.</p>
         <p>The code for this web application is released under the MIT license. Data licenses, if available, can be obtained from the home page of the various natural product databases listed above.</p>
     </div>
 </div>

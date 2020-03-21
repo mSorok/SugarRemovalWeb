@@ -15,7 +15,7 @@ public class SugarRemovalWebApplication {
 
 
     public static void main(String[] args) {
-        IMAGE_DIR = "./molimg/";
+        IMAGE_DIR = "./moldata/";
         SpringApplication.run(SugarRemovalWebApplication.class, args);
     }
 

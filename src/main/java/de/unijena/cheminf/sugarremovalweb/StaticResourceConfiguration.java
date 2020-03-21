@@ -10,8 +10,8 @@ public class StaticResourceConfiguration extends WebMvcConfigurerAdapter {
 
     @Override
     public void addResourceHandlers(final ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/molimg/**")
-                .addResourceLocations("/molimg/", "file:molimg/");
+        registry.addResourceHandler("/moldata/**")
+                .addResourceLocations("/moldata/", "file:moldata/");
     }
 
 }

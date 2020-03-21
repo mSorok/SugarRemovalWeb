@@ -92,56 +92,63 @@ table td {
 
 #container
 {
-
-    margin-left: 2%;
-    margin-right: 2%;
     margin-bottom: 1%;
     margin-top: 1%;
+    float:left;
+    width: 100%;
+    /*margin-left: 2%;
+    margin-right: 2%;
+
     height: 53%;
     min-height: 700px;
-    float:left;
-    /*padding:2%;*/
+
+
+    width: 96%;
+    min-width: 1200px;
+    font-family: 'Roboto', sans-serif;
+    box-shadow: 2px 2px 2px 2px lightgrey;
+    */
+
+
+}
+
+#step1, #step2, #step3{
     width: 96%;
     min-width: 1200px;
     font-family: 'Roboto', sans-serif;
     box-shadow: 2px 2px 2px 2px lightgrey;
 
+    margin-bottom: 1%;
+    margin-top: 1%;
+    margin-left: 2%;
+    margin-right: 2%;
 
+    overflow: auto;
 }
+
+#sugarType{
+    width: 100%;
+    float: left;
+    margin-bottom: 1%;
+}
+
 
 
 #submitFile
 {
     float:left;
-    width:46.5%;
+    min-height: 130px;
+    width: 100%;
 
-    text-align: justify;
-    text-justify: inter-word;
-    padding-left: 1%;
 
-    height: 100%;
-}
-
-#fill3{
-    float:left;
-    width: 5%;
-    height: 100%;
 }
 
 
 #oclContainer
 {
     float:left;
-    width:47.5%;
     height: 100%;
-
-}
-
-#chemDoodleSketcher
-{
-    float:left;
-    width:47.5%;
-    height: 100%;
+    width: 100%;
 
 }
 
@@ -150,16 +157,7 @@ table td {
 #smilesSubmission{
     min-height: 130px;
     float:left;
-    width: 96%;
-    min-width: 1200px;
-    font-family: 'Roboto', sans-serif;
-    box-shadow: 2px 2px 2px 2px lightgrey;
-
-
-    margin-bottom: 1%;
-    margin-top: 1%;
-    margin-left: 2%;
-    margin-right: 2%;
+    width: 100%;
 
 }
 
@@ -181,53 +179,9 @@ table td {
 }
 
 
-#distributions_no_user_score_parent{
-    /*text-align:center;*/
-    min-width: 1200px;
-    height: 110%;
-    width: 96%;
-
-    float: left;
-
-    font-family: 'Roboto', sans-serif;
-
-    margin-bottom: 1%;
-    margin-top: 1%;
-    margin-left: 2%;
-    margin-right: 2%;
-
-    /*padding: 2%;*/
-    box-shadow: 2px 2px 2px 2px lightgrey;
 
 
-}
 
-#distributions_with_user_score_parent{
-    /*text-align:center;*/
-    min-width: 1200px;
-    height: 100%;
-    width: 96%;
-
-    float: left;
-
-    font-family: 'Roboto', sans-serif;
-
-    margin-bottom: 1%;
-    margin-top: 1%;
-    margin-left: 2%;
-    margin-right: 2%;
-
-    /*padding: 2%;*/
-    box-shadow: 2px 2px 2px 2px lightgrey;
-
-
-}
-
-#npPanel{
-    width: 100%;
-    height:80%;
-    float: left;
-}
 
 #resultsBody{
     /*    padding-left: 1%;
@@ -272,7 +226,7 @@ table td {
 
 
 
-input[type=button], input[type=submit], input[type=button], button.submit-mol-button-ocl, smiles-button, files-button, choose-file-button, button-new-compute1, button-new-compute2 {
+input[type=button], input[type=submit], input[type=button], button.submit-mol-button-ocl, smiles-button, files-button, choose-file-button, .input-choice-button, .choose-submission-type-button  {
     background-color: #8c9cbf;
     background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #8c9cbf), color-stop(50%, #546a9e), color-stop(50%, #36518f), color-stop(100%, #3d5691));
     background-image: -webkit-linear-gradient(top, #8c9cbf 0%, #546a9e 50%, #36518f 50%, #3d5691 100%);
@@ -291,7 +245,7 @@ input[type=button], input[type=submit], input[type=button], button.submit-mol-bu
     text-decoration: none;
     text-align: center;
     text-shadow: 0 -1px 1px #000f4d;}
-input[type=button]:hover, input[type=submit]:hover, input[type=button]:hover, button.submit-mol-button-ocl:hover, smiles-button:hover, files-button:hover, choose-file-button:hover, button-new-compute1:hover, button-new-compute2:hover{
+input[type=button]:hover, input[type=submit]:hover, input[type=button]:hover, button.submit-mol-button-ocl:hover, smiles-button:hover, files-button:hover, choose-file-button:hover, .input-choice-button:hover, .choose-submission-type-button:hover  {
     background-color: #7f8dad;
     background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #7f8dad), color-stop(50%, #4a5e8c), color-stop(50%, #2f477d), color-stop(100%, #364c80));
     background-image: -webkit-linear-gradient(top, #7f8dad 0%, #4a5e8c 50%, #2f477d 50%, #364c80 100%);
@@ -300,7 +254,7 @@ input[type=button]:hover, input[type=submit]:hover, input[type=button]:hover, bu
     background-image: -o-linear-gradient(top, #7f8dad 0%, #4a5e8c 50%, #2f477d 50%, #364c80 100%);
     background-image: linear-gradient(top, #7f8dad 0%, #4a5e8c 50%, #2f477d 50%, #364c80 100%);
     cursor: pointer; }
-input[type=button]:active, input[type=submit]:active, input[type=button]:active, button.submit-mol-button-ocl:active, smiles-button:active, files-button:active, choose-file-button:active, button-new-compute1:active, button-new-compute2:active{
+input[type=button]:active, input[type=submit]:active, input[type=button]:active, button.submit-mol-button-ocl:active, smiles-button:active, files-button:active, choose-file-button:active, .input-choice-button:active, choose-submission-type-button:active{
     -webkit-box-shadow: inset 0 0 20px 0 #1d2845, 0 1px 0 white;
     box-shadow: inset 0 0 20px 0 #1d2845, 0 1px 0 white; }
 
