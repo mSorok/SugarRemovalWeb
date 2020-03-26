@@ -70,34 +70,45 @@
 
     <div id="step3" > <!--Molecule input and submission-->
         <div id="submitFile"  style="display: none ; ">
-            <p>submit file div</p>
+
+            <h2>Upload a file</h2>
+
+            <form id="fileUpload">
+                <table>
+                    <tr><td>Molecular file to upload :</td><td><input style="font-size: 18px; font-min-size: 100%" type="file" name="file" id="choose-file-button" /></td></tr>
+                    <tr><td><small>Accepted formats: SDF, MOL, SMILES.<br />Max number of molecules: 1000 (can be long)</small></td><td><input type="submit" value="Upload & start scorer" onclick="submitFile(); return false;" id="files-button" /></td></tr>
+                </table>
+            </form>
+
+            <div id="errorDivFile" class="errorDiv">
+                <p>No file submitted!</p>
+            </div>
+            <div id="errorDivFileFormat" class="errorDiv">
+                <p>Incorrect file format. Accepted formats: SDF, MOL, SMI (SMILES)</p>
+            </div>
+
+
         </div>
 
         <div id="smilesSubmission" style="display: none ; ">
-            <h2>Paste SMILES string</h2>
-            <form id="smilesUpload" method="POST" enctype="text/plain" action="/smiles" style="width: 80%; padding-left: 1%;">
+            <h2>Submit SMILES</h2>
                 <table>
-                    <tr><td>SMILES: </td><td><input type="text" name="smiles" cols="100" size="100" /></td></tr>
-                    <tr><td><small>All SMILES types accepted but stereochemistry and isotopes will be ignored</small></td><td><input type="submit" value="Upload & remove sugars" class="smiles-button" /></td></tr>
+                    <tr><td>SMILES: </td><td><textarea id="smilesTextArea" type="text" cols="100" size="100" /></textarea></td></tr>
+                    <tr><td><small>All SMILES types accepted but stereochemistry and isotopes will be ignored</small></td><td><button class="submit-smiles-button"  onclick="submitSMILES(this)">Upload and remove sugars</button> </td></tr>
                 </table>
 
-            </form>
-            <div th:if="${smiles}" >
-                <p th:text="'Hello, ' + ${smiles} + '!'"></p>
-            </div>
 
-            <div th:if="${notSmiles}" id="errorDiv">
-
+            <div id="errorDivSmiles" class="errorDiv">
                 <p>The pasted string is empty or is not a SMILES</p>
-
             </div>
         </div>
 
         <div id="oclContainer"  style="display: none ; ">
-            <h2>Draw molecule</h2>
+            <h2>Draw a molecule</h2>
             <table>
+
                 <tr><td>
-                    <div id="editor" style="width: 500px; height:400px; border: solid; border-width:1px; position:relative;"></div>
+                    <div id="editor"></div>
                     <script>
                         var editor = OCL.StructureEditor.createEditor("editor");
                     </script>
@@ -106,10 +117,18 @@
 
                 <tr>
                     <td>
-                        <button class="submit-mol-button-ocl"  >Upload and remove sugars</button> <!--style="font-size: 18px; font-min-size: 100%"-->
+                        <button class="submit-mol-button-ocl"  onclick="submitDraw(this)" >Submit molecule</button> <!--style="font-size: 18px; font-min-size: 100%"-->
                     </td>
+
+
                 </tr>
+
+
             </table>
+
+            <div id="errorDivDraw" class="errorDiv">
+                <p>No molecule detected!</p>
+            </div>
         </div>
 
 
