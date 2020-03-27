@@ -180,8 +180,11 @@ function submitSMILES(obj){
     submittedMoleculeData.sugarsToRemove = sugarRemovalParams;
     console.log(submittedMoleculeData);
 
-    if(smiles.trim().match(/^([^J][0-9BCOHNSOPrIFla@+\-\[\]\(\)\\\/%=#$]{6,})$/ig) && smiles !="" && !/^\s+$/.test(smiles) ){
+
+    if(smiles.trim().match(/^([^J][A-Za-z0-9@+\-\[\]\(\)\\=#$]+)$/ig) && smiles !="" && smiles !=" "){
+
         $(document.getElementById("errorDivSmiles")).slideUp();
+
         var settings = {
             "url": "/molecule",
             "method": "POST",
@@ -190,8 +193,42 @@ function submitSMILES(obj){
                 "Content-Type": "application/json"
             },
             "data": JSON.stringify(submittedMoleculeData),
+
+            success: function (processedMolecules) {
+
+
+                var resultsTableDiv = document.getElementById("resultList");
+                resultsTableDiv.innerHTML = fillResultsTable(processedMolecules);
+
+                $(document).ready( function () {
+                    $('#filledTable').DataTable(
+                        {
+                            dom: '<"top"if>rt<"bottom"Bp>',
+                            buttons: [
+                                'csv', 'copy'
+                            ]
+                        }
+
+                    );
+                } );
+
+                $(document.getElementById("resultList")).slideDown();
+
+                var offset = $(document.getElementById("resultList")).offset();
+                offset.top -= 20;
+                $('html, body').animate({
+                    scrollTop: offset.top,
+                });
+
+                console.log("SUCCESS : ", processedMolecules[0].smiles);
+
+            },
         };
-        $.ajax(settings).done(function (response) {
+
+
+        $.ajax(
+            settings
+        ).done(function (response) {
             console.log(response);
         });
     }else{
@@ -206,14 +243,12 @@ function submitSMILES(obj){
 
 
 function submitDraw(obj) {
-    console.log("pressed draw button");
-    console.log(submittedMoleculeData);
+
     var drawnMolecule = editor.getSmiles();
     submittedMoleculeData.dataString = drawnMolecule;
     submittedMoleculeData.sugarsToRemove = sugarRemovalParams;
-    console.log(submittedMoleculeData);
 
-    if (drawnMolecule !="" && !/^\s+$/.test(drawnMolecule) ) {
+    if (drawnMolecule !="" ) {
         $(document.getElementById("errorDivDraw")).slideUp();
         var settings = {
             "url": "/molecule",
@@ -223,6 +258,33 @@ function submitDraw(obj) {
                 "Content-Type": "application/json"
             },
             "data": JSON.stringify(submittedMoleculeData),
+            success: function (processedMolecules) {
+
+                var resultsTableDiv = document.getElementById("resultList");
+                resultsTableDiv.innerHTML = fillResultsTable(processedMolecules);
+
+                $(document).ready( function () {
+                    $('#filledTable').DataTable(
+                        {
+                            dom: '<"top"if>rt<"bottom"Bp>',
+                            buttons: [
+                                'csv', 'copy'
+                            ]
+                        }
+
+                    );
+                } );
+
+                $(document.getElementById("resultList")).slideDown();
+                var offset = $(document.getElementById("resultList")).offset();
+                offset.top -= 20;
+                $('html, body').animate({
+                    scrollTop: offset.top,
+                });
+
+                console.log("SUCCESS : ", processedMolecules);
+
+            },
         };
         $.ajax(settings).done(function (response) {
             console.log(response);
@@ -267,6 +329,11 @@ function submitFile(){
         }).then(function(response){
             if (response.status !== 200) {
                 $(document.getElementById("errorDivFile")).slideDown();
+            }else if(response.status==200){
+                var processedMolecules = response;
+                var json = JSON.stringify(processedMolecules);
+                $('#resultList').html("<h2>"+json+"</h2>");
+                console.log("SUCCESS : ", processedMolecules);
             }
         }).catch(function(err) {
             $(document.getElementById("errorDivFile")).slideDown();
@@ -278,6 +345,44 @@ function submitFile(){
 
 
 }
+
+
+
+
+
+
+function drawMoleculeBySmiles(smiles) {
+    var molecule = OCL.Molecule.fromSmiles(smiles);
+
+    var docW = $(document).width();
+    return OCL.SVGRenderer.renderMolecule(molecule.getIDCode(), docW/8, docW/8);
+}
+
+
+function fillResultsTable(processedMolecules){
+    //processed Molecules is a list of objects processedMolecule
+
+    var htmlText;
+
+    // tableheader
+    htmlText = "<table id='filledTable' class='display'>";
+    htmlText+= "<thead><tr><th>Submitted molecule</th><th>Structure</th><th>Deglycosylated moieties</th><th>Removed sugars</th></tr></thead>";
+
+    //table body
+    htmlText+="<tbody>";
+
+    for(var i = 0; i< processedMolecules.length; i++){
+        htmlText += '<tr><td>' + processedMolecules[i].smiles + '</td><td style="text-align:center;"><svg style="text-align:center;" xmlns="http://www.w3.org/2000/svg" >'+drawMoleculeBySmiles(processedMolecules[i].smiles)+"<svg/></td>" +
+            "<td>"+processedMolecules[i].deglycosylatedMoietiesSmiles+"</td><td>"+processedMolecules[i].sugarMoietiesRemovedSmiles+"</td></tr>";
+    }
+    htmlText += "</tbody>";
+    htmlText += "</table>";
+
+
+    return htmlText;
+}
+
+
 
 
 

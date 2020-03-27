@@ -1,0 +1,21 @@
+version: '3.2'
+
+services:
+  nplsweb:
+    build: '.'
+    container_name: web_sugar
+    restart: always
+    environment:
+      VIRTUAL_HOST: sugar.naturalproducts.net
+      VIRTUAL_PORT: 8092
+      LETSENCRYPT_HOST: sugar.naturalproducts.net
+      LETSENCRYPT_EMAIL: maria.ssorokina@gmail.com
+    volumes:
+    - ./volume:/tmp
+    - ./upload-dir:/upload-dir
+
+
+networks:
+  default:
+    external:
+      name: nginx-proxy

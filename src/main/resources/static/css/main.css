@@ -112,7 +112,7 @@ table td {
 
 }
 
-#step1, #step2, #step3{
+#step1, #step2, #step3, #step4{
     width: 96%;
     min-width: 1200px;
     font-family: 'Roboto', sans-serif;
@@ -123,6 +123,18 @@ table td {
     margin-left: 2%;
     margin-right: 2%;
 
+    overflow: auto;
+}
+
+
+#resultList{
+    float:left;
+    width: 96%;
+    height: 98%;
+    margin-right: 2%;
+    margin-left: 2%;
+    margin-top: 1%;
+    margin-bottom: 1%;
     overflow: auto;
 }
 
@@ -138,9 +150,6 @@ table td {
 {
     float:left;
     min-height: 130px;
-    float:left;
-
-
 }
 
 
@@ -151,8 +160,6 @@ table td {
     width: 100%;
     overflow: auto;
     margin-left: 2%;
-
-    background-color: blue;
 
 }
 

@@ -10,6 +10,9 @@
     <script src="https://www.lactame.com/lib/openchemlib/5.6.1/openchemlib-full.js"></script>
     <script src="https://code.jquery.com/jquery-latest.min.js"></script>
 
+    <link rel="stylesheet" type="text/css" href="DataTables/datatables.min.css"/>
+    <script type="text/javascript" src="DataTables/datatables.min.js"></script>
+
     <script src="/js/power.js"></script>
 </head>
 <body>
@@ -76,7 +79,7 @@
             <form id="fileUpload">
                 <table>
                     <tr><td>Molecular file to upload :</td><td><input style="font-size: 18px; font-min-size: 100%" type="file" name="file" id="choose-file-button" /></td></tr>
-                    <tr><td><small>Accepted formats: SDF, MOL, SMILES.<br />Max number of molecules: 1000 (can be long)</small></td><td><input type="submit" value="Upload & start scorer" onclick="submitFile(); return false;" id="files-button" /></td></tr>
+                    <tr><td><small>Accepted formats: SDF, MOL, SMILES.<br />Max number of molecules: 1000 (can be long)</small></td><td><input type="submit" value="Upload and remove sugars" onclick="submitFile(); return false;" id="files-button" /></td></tr>
                 </table>
             </form>
 
@@ -117,7 +120,7 @@
 
                 <tr>
                     <td>
-                        <button class="submit-mol-button-ocl"  onclick="submitDraw(this)" >Submit molecule</button> <!--style="font-size: 18px; font-min-size: 100%"-->
+                        <button class="submit-mol-button-ocl"  onclick="submitDraw(this)" >Upload and remove sugars</button> <!--style="font-size: 18px; font-min-size: 100%"-->
                     </td>
 
 
@@ -134,6 +137,11 @@
 
     </div>
 
+    <div id="step4">
+        <!--<div id="resultsText"></div>-->
+        <div id="resultList"></div>
+    </div>
+
 
 
 </div>
@@ -148,6 +156,8 @@
         <p>The code for this web application is released under the MIT license. Data licenses, if available, can be obtained from the home page of the various natural product databases listed above.</p>
     </div>
 </div>
+
+
 
 </body>
 </html>

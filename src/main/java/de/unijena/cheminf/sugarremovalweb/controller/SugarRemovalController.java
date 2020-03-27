@@ -5,6 +5,7 @@ import de.unijena.cheminf.sugarremovalweb.model.ProcessedMolecule;
 import de.unijena.cheminf.sugarremovalweb.model.SubmittedMoleculeData;
 import de.unijena.cheminf.sugarremovalweb.readers.ReaderService;
 import de.unijena.cheminf.sugarremovalweb.readers.UserInputMoleculeReaderService;
+import de.unijena.cheminf.sugarremovalweb.services.SugarRemovalService;
 import de.unijena.cheminf.sugarremovalweb.storage.StorageFileNotFoundException;
 import de.unijena.cheminf.sugarremovalweb.storage.StorageService;
 import org.openscience.cdk.DefaultChemObjectBuilder;
@@ -17,6 +18,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -46,6 +48,9 @@ public class SugarRemovalController {
     @Autowired
     SessionCleaner sessionCleaner;
 
+    @Autowired
+    SugarRemovalService sugarRemovalService;
+
 
     @Autowired
     UserInputMoleculeReaderService userInputMoleculeReaderService;
@@ -55,17 +60,7 @@ public class SugarRemovalController {
         this.storageService = storageService;
     }
 
-
-    @GetMapping(produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<ArrayList<ProcessedMolecule>> checkMoleculeAndParameters(){
-
-        ArrayList<ProcessedMolecule> processedMolecules = new ArrayList<>();
-        //TODO add molecules to the list
-
-        ResponseEntity<ArrayList<ProcessedMolecule>> re = new ResponseEntity(processedMolecules, HttpStatus.OK );
-        return re;
-    }
-
+    ArrayList<ProcessedMolecule> processedMolecules ;
 
 
     @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE})
@@ -87,30 +82,32 @@ public class SugarRemovalController {
         ProcessedMolecule processedMolecule = processReceivedMolecule(submittedMoleculeData.getDataString(), submittedMoleculeData.getSugarsToRemove());
 
 
+        processedMolecules = new ArrayList<>();
+        processedMolecules.add(processedMolecule);
 
 
-        //TODO process molecule:
-
-
-        ArrayList<ProcessedMolecule> processedMolecules = new ArrayList<>();
-        //TODO add molecules to the list if more than one
-
-        ResponseEntity<ArrayList<ProcessedMolecule>> re = new ResponseEntity(processedMolecules, HttpStatus.OK );
-        return re;
+        return new ResponseEntity(processedMolecules, HttpStatus.OK);
     }
 
 
 
-    @PostMapping(consumes = { "multipart/form-data" })
-    public void catchUploadedFileAndParameters(@RequestPart("submittedMoleculeData") SubmittedMoleculeData submittedMoleculeData,
+    @PostMapping(consumes = { "multipart/form-data" }, produces = {MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<ArrayList<ProcessedMolecule>>  catchUploadedFileAndParameters(@RequestPart("submittedMoleculeData") SubmittedMoleculeData submittedMoleculeData,
                        @RequestPart("file") MultipartFile file) {
 
         if(!file.isEmpty()) {
             storageService.store(file);
             String loadedFile = "upload-dir/" + file.getOriginalFilename();
             System.out.println(loadedFile);
+
+            //TODO read the file
+            //TODO return processed
+            processedMolecules = new ArrayList<>(); //TODO add to this arraylist
+
+            return new ResponseEntity(processedMolecules, HttpStatus.OK);
         }
 
+        return new ResponseEntity(processedMolecules, HttpStatus.BAD_REQUEST);
     }
 
 
@@ -130,21 +127,26 @@ public class SugarRemovalController {
 
     public ProcessedMolecule processReceivedMolecule(String smiles, ArrayList<String> sugarsToRemove){
         ProcessedMolecule processedMolecule = new ProcessedMolecule();
+        processedMolecule.setSmiles(smiles);
+        processedMolecule.setSugarsToRemove(sugarsToRemove);
+        processedMolecule.setSubmittedDataType("SMILES");
         SmilesParser sp = new SmilesParser(DefaultChemObjectBuilder.getInstance());
 
-        IAtomContainer molecule = null;
+        /*IAtomContainer molecule = null;
         try {
             molecule = sp.parseSmiles(smiles);
-            processedMolecule.setMolecule(molecule);
-
-            //TODO remove sugars as in sugarsToRemove
-
-
         }catch(CDKException e){
             e.printStackTrace();
-        }
+        }*/
+
+        //processedMolecule.setMolecule(molecule);
+
+        //TODO remove sugars
+        System.out.println("end of processed molecule");
         return processedMolecule;
     }
+
+
 
 /******** FILE HANDLING ********/
 

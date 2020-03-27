@@ -14,7 +14,11 @@ public class ProcessedMolecule {
 
     ArrayList<IAtomContainer> sugarMoietiesRemoved;
 
+    ArrayList<String> sugarMoietiesRemovedSmiles;
+
     ArrayList<IAtomContainer> deglycosylatedMoieties;
+
+    ArrayList<String> deglycosylatedMoietiesSmiles;
 
     String submittedDataType;
 
@@ -67,4 +71,19 @@ public class ProcessedMolecule {
         this.submittedDataType = submittedDataType;
     }
 
+    public ArrayList<String> getSugarMoietiesRemovedSmiles() {
+        return sugarMoietiesRemovedSmiles;
+    }
+
+    public void setSugarMoietiesRemovedSmiles(ArrayList<String> sugarMoietiesRemovedSmiles) {
+        this.sugarMoietiesRemovedSmiles = sugarMoietiesRemovedSmiles;
+    }
+
+    public ArrayList<String> getDeglycosylatedMoietiesSmiles() {
+        return deglycosylatedMoietiesSmiles;
+    }
+
+    public void setDeglycosylatedMoietiesSmiles(ArrayList<String> deglycosylatedMoietiesSmiles) {
+        this.deglycosylatedMoietiesSmiles = deglycosylatedMoietiesSmiles;
+    }
 }
