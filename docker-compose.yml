@@ -1,7 +1,7 @@
 version: '3.2'
 
 services:
-  nplsweb:
+  sugarweb:
     build: '.'
     container_name: web_sugar
     restart: always
@@ -12,7 +12,6 @@ services:
       LETSENCRYPT_EMAIL: maria.ssorokina@gmail.com
     volumes:
     - ./volume:/tmp
-    - ./upload-dir:/upload-dir
 
 
 networks:

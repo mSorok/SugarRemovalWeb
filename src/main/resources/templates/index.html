@@ -1,4 +1,4 @@
-<html xmlns:th="http://www.thymeleaf.org">
+<!DOCTYPE html>
 
 <head lang="en">
     <meta charset="UTF-8">
@@ -7,14 +7,16 @@
     <link rel="stylesheet" href="/css/main.css" />
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
     <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
-    <script src="https://www.lactame.com/lib/openchemlib/5.6.1/openchemlib-full.js"></script>
     <script src="https://code.jquery.com/jquery-latest.min.js"></script>
+
+    <script src="https://www.lactame.com/lib/openchemlib/5.6.1/openchemlib-full.js"></script>
 
     <link rel="stylesheet" type="text/css" href="DataTables/datatables.min.css"/>
     <script type="text/javascript" src="DataTables/datatables.min.js"></script>
 
     <script src="/js/power.js"></script>
 </head>
+
 <body>
 
 <div id="headercheminf">
@@ -62,7 +64,7 @@
     <div id="step2" style="display: none ;">
         <h2>Select molecule input type</h2>
 
-        <table>
+        <table id="submissionType">
             <tr>
                 <td><button type="button" class="input-choice-button" onclick="showFileInputDiv(this)"> File (SDF, MOL, SMI) </button></td>
                 <td><button type="button" class="input-choice-button" onclick="showSmilesPasteDiv(this)">Paste SMILES</button></td>
@@ -74,7 +76,7 @@
     <div id="step3" > <!--Molecule input and submission-->
         <div id="submitFile"  style="display: none ; ">
 
-            <h2>Upload a file</h2>
+            <h2 style="margin-left: 0px;">Upload a file</h2>
 
             <form id="fileUpload">
                 <table>
@@ -94,7 +96,7 @@
         </div>
 
         <div id="smilesSubmission" style="display: none ; ">
-            <h2>Submit SMILES</h2>
+            <h2 style="margin-left: 0px;">Submit SMILES</h2>
                 <table>
                     <tr><td>SMILES: </td><td><textarea id="smilesTextArea" type="text" cols="100" size="100" /></textarea></td></tr>
                     <tr><td><small>All SMILES types accepted but stereochemistry and isotopes will be ignored</small></td><td><button class="submit-smiles-button"  onclick="submitSMILES(this)">Upload and remove sugars</button> </td></tr>
@@ -107,27 +109,11 @@
         </div>
 
         <div id="oclContainer"  style="display: none ; ">
-            <h2>Draw a molecule</h2>
-            <table>
+            <h2 style="margin-left: 0px;">Draw a molecule</h2>
 
-                <tr><td>
-                    <div id="editor"></div>
-                    <script>
-                        var editor = OCL.StructureEditor.createEditor("editor");
-                    </script>
+            <div id="superEditor"></div>
 
-                </td></tr>
-
-                <tr>
-                    <td>
-                        <button class="submit-mol-button-ocl"  onclick="submitDraw(this)" >Upload and remove sugars</button> <!--style="font-size: 18px; font-min-size: 100%"-->
-                    </td>
-
-
-                </tr>
-
-
-            </table>
+            <button class="submit-mol-button-ocl"  onclick="submitDraw(this)" >Upload and remove sugars</button> <!--style="font-size: 18px; font-min-size: 100%"-->
 
             <div id="errorDivDraw" class="errorDiv">
                 <p>No molecule detected!</p>
@@ -139,8 +125,10 @@
 
     <div id="step4">
         <!--<div id="resultsText"></div>-->
-        <div id="resultList"></div>
+        <div id="resultList" style="display: none ; "></div>
     </div>
+
+
 
 
 
@@ -156,7 +144,6 @@
         <p>The code for this web application is released under the MIT license. Data licenses, if available, can be obtained from the home page of the various natural product databases listed above.</p>
     </div>
 </div>
-
 
 
 </body>

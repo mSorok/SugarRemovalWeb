@@ -22,7 +22,8 @@ h2, .h2 {
 
 
 table td {
-    vertical-align: top;
+    vertical-align: center;
+    border-collapse: separate;
 }
 
 
@@ -130,26 +131,32 @@ table td {
 #resultList{
     float:left;
     width: 96%;
-    height: 98%;
     margin-right: 2%;
     margin-left: 2%;
-    margin-top: 1%;
-    margin-bottom: 1%;
+
     overflow: auto;
 }
 
 #sugarType{
-    width: 100%;
+    width: 96%;
+    margin-right: 2%;
+    margin-left: 2%;
     float: left;
     margin-bottom: 1%;
 }
 
-
+#submissionType{
+    margin-right: 2%;
+    margin-left: 2%;
+}
 
 #submitFile
 {
     float:left;
     min-height: 130px;
+    width: 96%;
+    margin-right: 2%;
+    margin-left: 2%;
 }
 
 
@@ -157,17 +164,13 @@ table td {
 {
     float:left;
     min-height: 550px;
-    width: 100%;
+
     overflow: auto;
+
+    width: 96%;
+    margin-right: 2%;
     margin-left: 2%;
 
-}
-
-#editor{
-    width: 500px;
-    height:400px;
-    border: solid;
-    border-width:1px;
 
 }
 
@@ -175,8 +178,9 @@ table td {
 #smilesSubmission{
     min-height: 130px;
     float:left;
-
-
+    width: 96%;
+    margin-right: 2%;
+    margin-left: 2%;
 }
 
 #listSubmittedFiles{
@@ -199,43 +203,6 @@ table td {
 
 
 
-
-
-
-#resultsBody{
-    /*    padding-left: 1%;
-        padding-right: 1%;*/
-    /*margin-right: 10px;
-    margin-left: 10px;*/
-    width:100%;
-    float: left;
-
-}
-
-#resultsTable {
-    /*<!--border: 1px solid black;-->*/
-    width:94%;
-    margin-bottom: 1%;
-    margin-top: 1%;
-    margin-left: 2%;
-    margin-right: 2%;
-    padding-left: 1%;
-    padding-right: 1%;
-    box-shadow: 2px 2px 2px 2px lightgrey;
-    font-family: 'Roboto', sans-serif;
-    min-width: 1200px;
-
-    float: left;
-
-}
-
-#resultsTableTable{
-    width: 100%;
-    margin-top: 1%;
-    margin-bottom: 1%;
-    padding-top: 1%;
-    padding-bottom: 1%;
-}
 
 #recomputeOrClear{
     margin-left: 2%;

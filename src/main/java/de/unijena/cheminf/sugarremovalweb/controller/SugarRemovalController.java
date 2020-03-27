@@ -81,6 +81,7 @@ public class SugarRemovalController {
 
         ProcessedMolecule processedMolecule = processReceivedMolecule(submittedMoleculeData.getDataString(), submittedMoleculeData.getSugarsToRemove());
 
+        //TODO here remove the sugars for the list of processed molecules
 
         processedMolecules = new ArrayList<>();
         processedMolecules.add(processedMolecule);
