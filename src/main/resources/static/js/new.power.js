@@ -21,29 +21,16 @@ function fillSugarRemovalParams(obj){
         sugarRemovalParams.push("ringSugars");
     }
     if(cbs[2].checked==true){
-        sugarRemovalParams.push("terminalRingSugars");
-    }
-    if(cbs[3].checked==true){
         sugarRemovalParams.push("linearSugars");
     }
-    if(cbs[4].checked==true){
-        sugarRemovalParams.push("terminalLnearSugars");
+    if(cbs[3].checked==true){
+        sugarRemovalParams.push("terminalRingSugars");
     }
 
-    var allWithGlyBonds = document.getElementById("cbWithGlyBonds1");
-    if(allWithGlyBonds.checked == true){
-        sugarRemovalParams.push("allSugarsWithGlyBonds");
+    var withGlyBond = document.getElementsByClassName("classWithGlyBonds");
+    if(withGlyBond.checked == true){
+        sugarRemovalParams.push("withGlyBonds");
     }
-    var ringWithGlyBonds = document.getElementById("cbWithGlyBonds2");
-    if(ringWithGlyBonds.checked == true){
-        sugarRemovalParams.push("ringsWithGlyBonds");
-    }
-    var termRingWithGlyBonds = document.getElementById("cbWithGlyBonds3");
-    if(termRingWithGlyBonds.checked == true){
-        sugarRemovalParams.push("termRingsWithGlyBonds");
-    }
-
-
 
     console.log(sugarRemovalParams);
 
@@ -63,6 +50,7 @@ function fillSugarRemovalParams(obj){
                 scrollTop: offset.top,
             });
         }
+        sugarRemovalParams = [];
 
     }else{
         $(x).slideUp();
@@ -73,6 +61,7 @@ function fillSugarRemovalParams(obj){
         $('html, body').animate({
             scrollTop: offset.top,
         });
+
     }
 }
 
@@ -81,7 +70,7 @@ function fillSugarRemovalParams(obj){
 
 
 /* Control sugar removal type CheckBoxes */
-function uncheckPickingBoxes(obj) { //Controls position 0
+function uncheckPickingBoxes(obj) {
     sugarRemovalParams = [];
     var cbs = document.getElementsByClassName("cbSugarType");
 
@@ -101,8 +90,7 @@ function uncheckPickingBoxes(obj) { //Controls position 0
     }
 }
 
-
-function uncheckAllAndTerminalRingCheckbox(obj){ //controls position 1
+function uncheckAllAndTerminalRingCheckbox(obj){
     sugarRemovalParams = [];
     var cbs = document.getElementsByClassName("cbSugarType");
     cbs[0].checked = false; //all
@@ -123,7 +111,7 @@ function uncheckAllAndTerminalRingCheckbox(obj){ //controls position 1
 }
 
 
-function unckeckAllAndRingCheckbox(obj){//Contols position 2
+function unckeckAllAndRingCheckbox(obj){
     sugarRemovalParams = [];
     var cbs = document.getElementsByClassName("cbSugarType");
     cbs[0].checked = false;
@@ -143,16 +131,11 @@ function unckeckAllAndRingCheckbox(obj){//Contols position 2
 
 }
 
-
-
-function uncheckAllAndTerminalLinearCheckbox(obj){//controls position 3
+function uncheckAllAndTerminalLinearCheckbox(obj){
     sugarRemovalParams = [];
     var cbs = document.getElementsByClassName("cbSugarType");
     cbs[0].checked = false;
     cbs[4].checked = false;
-
-    $(document.getElementById("glyBonds1")).slideUp();
-    document.getElementById("cbWithGlyBonds1").checked = false;
 
     if(cbs[1].checked == false && cbs[2].checked==false){
         $(document.getElementById("glyBonds2")).slideUp();
@@ -162,15 +145,11 @@ function uncheckAllAndTerminalLinearCheckbox(obj){//controls position 3
     }
 }
 
-function uncheckAllAndLinearCheckbox(obj){//controls position 4
+function uncheckAllAndLinearCheckbox(obj){
     sugarRemovalParams = [];
     var cbs = document.getElementsByClassName("cbSugarType");
     cbs[0].checked = false;
     cbs[3].checked = false;
-
-    $(document.getElementById("glyBonds1")).slideUp();
-    document.getElementById("cbWithGlyBonds1").checked = false;
-
     if(cbs[1].checked == false && cbs[2].checked==false){
         $(document.getElementById("glyBonds2")).slideUp();
         $(document.getElementById("glyBonds3")).slideUp();
@@ -183,8 +162,6 @@ function uncheckAllAndLinearCheckbox(obj){//controls position 4
 function checkedWithGlyBonds(obj){
     //TODO
 }
-
-
 
 
 
@@ -272,6 +249,7 @@ function submitSMILES(obj){
     var smiles = document.getElementById("smilesTextArea").value;
     submittedMoleculeData.dataString = smiles;
     submittedMoleculeData.sugarsToRemove = sugarRemovalParams;
+    sugarRemovalParams = [];
     console.log(submittedMoleculeData);
 
 
@@ -343,6 +321,7 @@ function submitDraw(obj) {
     var drawnMolecule = editor.getSmiles();
     submittedMoleculeData.dataString = drawnMolecule;
     submittedMoleculeData.sugarsToRemove = sugarRemovalParams;
+    sugarRemovalParams = [];
 
     console.log(drawnMolecule);
 
@@ -367,6 +346,14 @@ function submitDraw(obj) {
                             dom: '<"top"if>rt<"bottom"Bp>',
                             buttons: [
                                 'csv', 'copy'
+                            ],
+                            "columns": [
+                                { "max-width": "350px"},
+                                null,
+                                { "max-width": "350px"},
+                                null,
+                                null
+
                             ]
                         }
 
@@ -410,6 +397,10 @@ function submitFile(){
 
     var fileData = new FormData();
 
+    submittedMoleculeData.sugarsToRemove = sugarRemovalParams;
+    sugarRemovalParams = [];
+
+
     fileData.append("file", document.forms["fileUpload"].file.files[0]);
     fileData.append('submittedMoleculeData', new Blob([JSON.stringify(submittedMoleculeData)], {
         type: "application/json"
@@ -420,7 +411,7 @@ function submitFile(){
     console.log(fileName);
 
     if(fileName.toLowerCase().endsWith("sdf") || fileName.toLowerCase().endsWith("mol") || fileName.toLowerCase().endsWith("smi")
-        || fileName.toLowerCase().endsWith("smiles")){
+    || fileName.toLowerCase().endsWith("smiles")){
         fetch('/molecule', {
             method: 'post',
             body: fileData
@@ -442,6 +433,14 @@ function submitFile(){
                             dom: '<"top"if>rt<"bottom"Bp>',
                             buttons: [
                                 'csv', 'copy'
+                            ],
+                            "columns": [
+                                { "max-width": "350px"},
+                                null,
+                                { "max-width": "350px"},
+                                null,
+                                null
+
                             ]
                         }
 
@@ -486,29 +485,52 @@ function drawMoleculeBySmiles(smiles, size) {
 function fillResultsTable(processedMolecules){
     //processed Molecules is a list of objects processedMolecule
 
-    var htmlText;
-
-    // tableheader
-    htmlText = "<table id='filledTable' class='display'>";
-    htmlText+= "<thead><tr><th>Submitted molecule</th><th>Structure</th><th>Deglycosylated moieties</th><th>Removed sugars</th></tr></thead>";
+    var htmlText= '<table id="filledTable" class="display">';
+    htmlText+= '<thead><tr><th>Submitted molecule</th><th>Structure</th><th>Deglycosylated moieties</th><th>Deglycosylated structures</th><th>Removed sugars</th></tr></thead>';
 
     //table body
     htmlText+="<tbody>";
 
+    console.log(htmlText);
     for(var i = 0; i< processedMolecules.length; i++){
+
+        console.log(processedMolecules[i]);
         htmlText += '<tr><td>';
+        console.log(htmlText);
         htmlText += processedMolecules[i].smiles;
+        console.log(htmlText);
         htmlText += '</td><td style="text-align:center;"><svg style="text-align:center;" xmlns="http://www.w3.org/2000/svg" >';
         htmlText += drawMoleculeBySmiles(processedMolecules[i].smiles, 8);
-        htmlText += "<svg/>";
-        htmlText +="</td><td style='text-align:center;'>";
+        console.log(htmlText);
+        htmlText += "</svg></td>";
+        console.log(htmlText);
+        console.log("just before");
+        console.log(htmlText);
+        htmlText += "<td style='text-align:center;'>";
+        console.log("just before2");
+        console.log(htmlText);
+        console.log(processedMolecules[i].deglycosylatedMoietiesSmiles.toString());
+        htmlText =+ processedMolecules[i].deglycosylatedMoietiesSmiles.toString();
+        console.log(htmlText);
+        htmlText =+ "</td>";
+        console.log(htmlText);
+
+        console.log(htmlText);
+        console.log("just after");
+        console.log(htmlText);
+        htmlText += "<td style='text-align:center;'>";
+        console.log(htmlText);
         htmlText += createDeglycosylatedMoeitiesList(processedMolecules[i].deglycosylatedMoietiesSmiles, processedMolecules[i]);
         htmlText += "</td><td  style='text-align:center;'>";
+        console.log(htmlText);
         htmlText += createSugarMoeitiesList(processedMolecules[i].sugarMoietiesRemovedSmiles);
         htmlText += "</td></tr>";
+        console.log(htmlText);
     }
     htmlText += "</tbody>";
     htmlText += "</table>";
+
+    console.log(htmlText);
 
 
     return htmlText;
@@ -556,4 +578,5 @@ function createDeglycosylatedMoeitiesList(listOfMoieties, processedMolecule){
 
 
 }
+
 

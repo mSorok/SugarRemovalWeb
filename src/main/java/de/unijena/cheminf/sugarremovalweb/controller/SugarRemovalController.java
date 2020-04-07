@@ -127,11 +127,14 @@ public class SugarRemovalController {
 
 
     public ProcessedMolecule processReceivedMolecule(String smiles, ArrayList<String> sugarsToRemove){
+
+
         ProcessedMolecule processedMolecule = new ProcessedMolecule();
         processedMolecule.setSmiles(smiles);
         processedMolecule.setSugarsToRemove(sugarsToRemove);
         processedMolecule.setSubmittedDataType("SMILES");
         SmilesParser sp = new SmilesParser(DefaultChemObjectBuilder.getInstance());
+
 
         /*IAtomContainer molecule = null;
         try {

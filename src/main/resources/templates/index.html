@@ -11,8 +11,8 @@
 
     <script src="https://www.lactame.com/lib/openchemlib/5.6.1/openchemlib-full.js"></script>
 
-    <link rel="stylesheet" type="text/css" href="DataTables/datatables.min.css"/>
-    <script type="text/javascript" src="DataTables/datatables.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="/DataTables/datatables.css"/>
+    <script type="text/javascript" src="/DataTables/datatables.js"></script>
 
     <script src="/js/power.js"></script>
 </head>
@@ -34,25 +34,54 @@
     <div id="step1">
         <h2>Choose sugar removal type</h2>
 
-        <div id="sugarType">
+        <div id="sugarType" >
 
-            <table>
+            <table align="center" style="table-layout:fixed;">
+                <colgroup>
+                    <col style="width: 18%">
+                    <col style="width: 18%">
+                    <col style="width: 18%">
+                    <col style="width: 18%">
+                    <col style="width: 18%">
+                </colgroup>
+                <tr style="text-align: center;">
+                    <td><img src="/img/molAllSugars.png" style="height:85px;width: 160px;alignment: center;"/></td>
+                    <td><img src="/img/molAllRingSugars.png" style="height:85px;width: 160px;alignment: center;"/></td>
+                    <td><img src="/img/molAllTerminalRingSugars.png" style="height:85px;width: 160px;alignment: center;"/></td>
+                    <td><img src="/img/molAllLinearSugars.png" style="height:85px;width: 160px;alignment: center;"/></td>
+                    <td><img src="/img/molLinearTerminalSugars.png" style="height:85px;width: 160px;alignment: center;"/></td>
+                </tr>
                 <tr>
-                    <td><input class="cbSugarType" type="checkbox" name="All" id="stAll" onchange="uncheckPickingBoxes(this)"/> </td>
-                    <td><label for = "stAll">Remove all sugars</label></td>
+                    <td><input class="cbSugarType" type="checkbox" name="All" id="stAll" onchange="uncheckPickingBoxes(this)"/><label for = "stAll">Remove all sugars &nbsp;&nbsp;</label> </td>
 
-                    <td><input class="cbSugarType" type="checkbox" name="OnlyRings" id="stOnlyRings" onchange="uncheckAllAndTerminalRingCheckbox(this)"/></td>
-                    <td><label for = "stOnlyRings">Remove ring sugars</label></td>
-                    <td><input class="cbSugarType" type="checkbox" name="OnlyLinear" id="stOnlyLinear" onchange="uncheckAllCheckbox(this)"/></td>
-                    <td><label for = "stOnlyLinear">Remove linear sugars</label></td>
-                    <td><input class="cbSugarType" type="checkbox" name="OnlyTerminalRings" id="stOnlyTermRings" onchange="unckeckAllAndRingCheckbox(this)"/></td>
-                    <td><label for = "stOnlyTermRings">Remove terminal ring sugars</label></td>
-                    <td><button class="choose-submission-type-button" onclick="fillSugarRemovalParams(this)" >Next: choose submission type</button></td>
+                    <td><input class="cbSugarType" type="checkbox" name="OnlyRings" id="stOnlyRings" onchange="uncheckAllAndTerminalRingCheckbox(this)"/><label for = "stOnlyRings">Remove all ring sugars</label></td>
+
+                    <td><input class="cbSugarType" type="checkbox" name="OnlyTerminalRings" id="stOnlyTermRings" onchange="unckeckAllAndRingCheckbox(this)"/> <label for = "stOnlyTermRings">Remove terminal ring sugars</label></td>
+
+                    <td><input class="cbSugarType" type="checkbox" name="OnlyLinear" id="stOnlyLinear" onchange="uncheckAllAndTerminalLinearCheckbox(this)"/><label for = "stOnlyLinear">Remove all linear sugars</label></td>
+
+                    <td><input class="cbSugarType" type="checkbox" name="OnlyTerminalLinear" id="stOnlyTermLinear" onchange="uncheckAllAndLinearCheckbox(this)"/><label for = "stOnlyTermLinear">Remove all terminal linear sugars</label></td>
+
+                </tr>
+                <tr>
+                    <td><div id="glyBonds1" style="display: none;"><input class="classWithGlyBonds" type="checkbox" name="WithGlyBonds" id="cbWithGlyBonds1" /><label for = "cbWithGlyBonds1">only glycosidic bond</label></div></td>
+                    <td><div id="glyBonds2" style="display: none;"><input class="classWithGlyBonds" type="checkbox" name="WithGlyBonds" id="cbWithGlyBonds2" /><label for = "cbWithGlyBonds2">only glycosidic bond</label></div></td>
+                    <td><div id="glyBonds3" style="display: none;"><input class="classWithGlyBonds" type="checkbox" name="WithGlyBonds" id="cbWithGlyBonds3" /><label for = "cbWithGlyBonds3">only glycosidic bond</label></div></td>
+                    <td></td>
+                    <td></td>
+
+                </tr>
+                <tr style="text-align: center;">
+                    <td></td>
+                    <td></td>
+                    <td><button class="choose-submission-type-button" onclick="fillSugarRemovalParams(this)" >&nbsp;&nbsp;&nbsp;Next: choose submission type&nbsp;&nbsp;&nbsp;</button></td>
+                    <td></td>
+                    <td></td>
                 </tr>
             </table>
         </div>
 
-        <div id="chooseSugarRemovalTypeFirst" style="display: none ;">
+        <div id="chooseSugarRemovalTypeFirst" style="display: none ;" align="center" >
             <h2 style=" color: red; ">Choose sugar removal type to submit your molecule(s)!</h2>
         </div>
 
@@ -64,13 +93,15 @@
     <div id="step2" style="display: none ;">
         <h2>Select molecule input type</h2>
 
-        <table id="submissionType">
-            <tr>
-                <td><button type="button" class="input-choice-button" onclick="showFileInputDiv(this)"> File (SDF, MOL, SMI) </button></td>
-                <td><button type="button" class="input-choice-button" onclick="showSmilesPasteDiv(this)">Paste SMILES</button></td>
-                <td><button type="button" class="input-choice-button" onclick="showDrawMoleculeDiv(this)">Draw molecule</button></td>
-            </tr>
-        </table>
+        <div  id="submissionType">
+            <table align="center" style="table-layout: fixed;">
+                <tr>
+                    <td><button type="button" class="input-choice-button" onclick="showFileInputDiv(this)">&nbsp;&nbsp;&nbsp;File (SDF, MOL, SMI)&nbsp;&nbsp;&nbsp;</button></td>
+                    <td><button type="button" class="input-choice-button" onclick="showSmilesPasteDiv(this)">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Paste SMILES&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button></td>
+                    <td><button type="button" class="input-choice-button" onclick="showDrawMoleculeDiv(this)">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Draw molecule&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button></td>
+                </tr>
+            </table>
+        </div>
     </div>
 
     <div id="step3" > <!--Molecule input and submission-->
@@ -97,10 +128,10 @@
 
         <div id="smilesSubmission" style="display: none ; ">
             <h2 style="margin-left: 0px;">Submit SMILES</h2>
-                <table>
-                    <tr><td>SMILES: </td><td><textarea id="smilesTextArea" type="text" cols="100" size="100" /></textarea></td></tr>
-                    <tr><td><small>All SMILES types accepted but stereochemistry and isotopes will be ignored</small></td><td><button class="submit-smiles-button"  onclick="submitSMILES(this)">Upload and remove sugars</button> </td></tr>
-                </table>
+            <table>
+                <tr><td>SMILES: </td><td><textarea id="smilesTextArea" type="text" cols="100" size="100" /></textarea></td></tr>
+                <tr><td><small>All SMILES types accepted but stereochemistry and isotopes will be ignored</small></td><td><button class="submit-smiles-button"  onclick="submitSMILES(this)">Upload and remove sugars</button> </td></tr>
+            </table>
 
 
             <div id="errorDivSmiles" class="errorDiv">
@@ -113,8 +144,9 @@
 
             <div id="superEditor"></div>
 
+            <div style="margin: 1%;">
             <button class="submit-mol-button-ocl"  onclick="submitDraw(this)" >Upload and remove sugars</button> <!--style="font-size: 18px; font-min-size: 100%"-->
-
+            </div>
             <div id="errorDivDraw" class="errorDiv">
                 <p>No molecule detected!</p>
             </div>

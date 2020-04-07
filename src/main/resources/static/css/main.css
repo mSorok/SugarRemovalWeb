@@ -21,9 +21,16 @@ h2, .h2 {
 }
 
 
-table td {
+
+table {
     vertical-align: center;
     border-collapse: separate;
+    border-spacing: 25px 5px;
+}
+
+td {
+    vertical-align: center;
+    padding: 10px 0;
 }
 
 
@@ -146,8 +153,11 @@ table td {
 }
 
 #submissionType{
+    width: 96%;
     margin-right: 2%;
     margin-left: 2%;
+    float: left;
+    margin-bottom: 1%;
 }
 
 #submitFile

@@ -10,15 +10,15 @@ public class ProcessedMolecule {
 
     IAtomContainer molecule;
 
-    String smiles;
+    public String smiles;
 
     ArrayList<IAtomContainer> sugarMoietiesRemoved;
 
-    ArrayList<String> sugarMoietiesRemovedSmiles;
+    public ArrayList<String> sugarMoietiesRemovedSmiles;
 
     ArrayList<IAtomContainer> deglycosylatedMoieties;
 
-    ArrayList<String> deglycosylatedMoietiesSmiles;
+    public ArrayList<String> deglycosylatedMoietiesSmiles;
 
     String submittedDataType;
 
