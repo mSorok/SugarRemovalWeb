@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 public class ProcessedMolecule {
 
-    ArrayList<String> sugarsToRemove;
+    public ArrayList<String> sugarsToRemove;
 
     IAtomContainer molecule;
 

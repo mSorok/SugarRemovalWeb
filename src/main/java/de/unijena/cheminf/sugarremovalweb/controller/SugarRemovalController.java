@@ -66,25 +66,12 @@ public class SugarRemovalController {
     @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<ArrayList<ProcessedMolecule>> catchMoleculeAndParameters(@RequestBody SubmittedMoleculeData submittedMoleculeData){
 
-
-        if (submittedMoleculeData.getSubmittedDataType().equals("smiles")){
-            System.out.println("process smiles");
-
-
-        } else if (submittedMoleculeData.getSubmittedDataType().equals("draw")){
-            System.out.println("process draw");
-
-        }
-
         System.out.println(submittedMoleculeData.getDataString());
         System.out.println(submittedMoleculeData.getSugarsToRemove());
 
-        ProcessedMolecule processedMolecule = processReceivedMolecule(submittedMoleculeData.getDataString(), submittedMoleculeData.getSugarsToRemove());
+        processedMolecules = sugarRemovalService.doWork(submittedMoleculeData);
 
-        //TODO here remove the sugars for the list of processed molecules
-
-        processedMolecules = new ArrayList<>();
-        processedMolecules.add(processedMolecule);
+        //TODO is processedMolecules empty : bad molecule - send bad request
 
 
         return new ResponseEntity(processedMolecules, HttpStatus.OK);
@@ -96,14 +83,19 @@ public class SugarRemovalController {
     public ResponseEntity<ArrayList<ProcessedMolecule>>  catchUploadedFileAndParameters(@RequestPart("submittedMoleculeData") SubmittedMoleculeData submittedMoleculeData,
                        @RequestPart("file") MultipartFile file) {
 
+        System.out.println(submittedMoleculeData.getDataString());
+        System.out.println(submittedMoleculeData.getSugarsToRemove());
+
+
         if(!file.isEmpty()) {
             storageService.store(file);
             String loadedFile = "upload-dir/" + file.getOriginalFilename();
             System.out.println(loadedFile);
 
-            //TODO read the file
-            //TODO return processed
-            processedMolecules = new ArrayList<>(); //TODO add to this arraylist
+
+            processedMolecules = sugarRemovalService.doWork(submittedMoleculeData, file);
+
+            //TODO is processedMolecules empty : bad molecule - send bad request
 
             return new ResponseEntity(processedMolecules, HttpStatus.OK);
         }
@@ -126,29 +118,6 @@ public class SugarRemovalController {
 
 
 
-    public ProcessedMolecule processReceivedMolecule(String smiles, ArrayList<String> sugarsToRemove){
-
-
-        ProcessedMolecule processedMolecule = new ProcessedMolecule();
-        processedMolecule.setSmiles(smiles);
-        processedMolecule.setSugarsToRemove(sugarsToRemove);
-        processedMolecule.setSubmittedDataType("SMILES");
-        SmilesParser sp = new SmilesParser(DefaultChemObjectBuilder.getInstance());
-
-
-        /*IAtomContainer molecule = null;
-        try {
-            molecule = sp.parseSmiles(smiles);
-        }catch(CDKException e){
-            e.printStackTrace();
-        }*/
-
-        //processedMolecule.setMolecule(molecule);
-
-        //TODO remove sugars
-        System.out.println("end of processed molecule");
-        return processedMolecule;
-    }
 
 
 

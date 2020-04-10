@@ -180,10 +180,6 @@ function uncheckAllAndLinearCheckbox(obj){//controls position 4
 }
 
 
-function checkedWithGlyBonds(obj){
-    //TODO
-}
-
 
 
 
@@ -407,6 +403,8 @@ function cleanOCLEditor(obj){
 
 
 function submitFile(){
+
+    submittedMoleculeData.sugarsToRemove = sugarRemovalParams;
 
     var fileData = new FormData();
 
