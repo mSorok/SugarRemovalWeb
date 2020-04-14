@@ -8,6 +8,7 @@ package de.unijena.cheminf.sugarremovalweb.services;
 import de.unijena.cheminf.sugarremovalweb.misc.MoleculeConnectivityChecker;
 import de.unijena.cheminf.sugarremovalweb.model.ProcessedMolecule;
 import de.unijena.cheminf.sugarremovalweb.model.SubmittedMoleculeData;
+import de.unijena.cheminf.sugarremovalweb.readers.ReaderService;
 import org.openscience.cdk.DefaultChemObjectBuilder;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.exception.InvalidSmilesException;
@@ -28,6 +29,7 @@ import org.openscience.cdk.tools.CDKHydrogenAdder;
 import org.openscience.cdk.tools.manipulator.AtomContainerComparator;
 import org.openscience.cdk.tools.manipulator.AtomContainerManipulator;
 import org.openscience.cdk.tools.manipulator.BondManipulator;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -35,6 +37,7 @@ import org.junit.Assert;
 
 import javax.swing.plaf.synth.SynthEditorPaneUI;
 import java.io.File;
+import java.io.IOException;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -95,6 +98,13 @@ public class SugarRemovalService {
 
     UniversalIsomorphismTester universalIsomorphismTester ;
 
+    @Autowired
+    MoleculeConnectivityChecker mcc;
+
+    @Autowired
+    ReaderService readerService;
+
+
 
 
     private List<IAtomContainer> ringSugars;
@@ -126,7 +136,6 @@ public class SugarRemovalService {
      */
     public ArrayList<ProcessedMolecule> doWork(SubmittedMoleculeData submittedMoleculeData){
 
-
         ArrayList<ProcessedMolecule> processedMolecules = new ArrayList<>();
 
         prepareSugars();
@@ -149,8 +158,9 @@ public class SugarRemovalService {
 
         } catch (InvalidSmilesException e) {
             e.printStackTrace();
-            return processedMolecules;
+            //continue;
         }
+
 
 
 
@@ -158,10 +168,12 @@ public class SugarRemovalService {
         //Removing sugars according to params
         if(!submittedMoleculeData.getSugarsToRemove().isEmpty()) {
 
-            if (submittedMoleculeData.getSugarsToRemove().contains("allSugars")) {
-                //TODO set all sugars
-
+            if (submittedMoleculeData.getSugarsToRemove().contains("allSugars")) {//remove all the sugars
                 molecule.sugarsToRemove.add("all");
+
+                setRemoveLinearSugarsInRing(false);
+                setPropertyOfSugarContainingMolecules(true);
+
                 if (submittedMoleculeData.getSugarsToRemove().contains("allSugarsWithGlyBonds")) {
                     setDetectGlycosidicBond(true);
                     molecule.sugarsToRemove.add("withGlyBonds");
@@ -170,7 +182,27 @@ public class SugarRemovalService {
                     setDetectGlycosidicBond(false);
                 }
 
-            } else {
+                try {
+                    moleculeToProcess = removeAllSugars(moleculeToProcess, false);
+                    //the molecule to process can be in several parts: need to separate them
+                    List<IAtomContainer> listAC = mcc.checkConnectivity(moleculeToProcess);
+                    if(listAC.size()>1){
+                        for(IAtomContainer moiety : listAC){
+                            molecule.deglycosylatedMoietiesSmiles.add(smilesGenerator.create(moiety));
+                        }
+
+                    }else{
+                        molecule.deglycosylatedMoietiesSmiles.add(smilesGenerator.create(moleculeToProcess));
+                    }
+
+
+                } catch (CloneNotSupportedException | CDKException e) {
+                    e.printStackTrace();
+                    return processedMolecules;
+                }
+
+            } else { //do the removal à la carte
+
                 if (submittedMoleculeData.getSugarsToRemove().contains("ringSugars")) {
 
                     molecule.sugarsToRemove.add("ring");
@@ -190,11 +222,7 @@ public class SugarRemovalService {
 
                     try {
                         moleculeToProcess = removeCircularSugars(moleculeToProcess, false);
-                        String smilesAfterDeglycosylation = smilesGenerator.create(moleculeToProcess);
-                        molecule.deglycosylatedMoietiesSmiles.add(smilesAfterDeglycosylation);
-
-
-                    } catch (CloneNotSupportedException | CDKException e) {
+                    } catch (CloneNotSupportedException e) {
                         e.printStackTrace();
                         return processedMolecules;
                     }
@@ -215,20 +243,65 @@ public class SugarRemovalService {
                         setDetectGlycosidicBond(true);
                     }
 
+
+                    try {
+                        moleculeToProcess = removeCircularSugars(moleculeToProcess, false);
+                    } catch (CloneNotSupportedException e) {
+                        e.printStackTrace();
+                        return processedMolecules;
+                    }
+
                 }
                 if (submittedMoleculeData.getSugarsToRemove().contains("linearSugars")) {
                     molecule.sugarsToRemove.add("linear");
+                    setRemoveOnlyTerminalSugars(false);
+                    setRemoveLinearSugarsInRing(false);
+                    setPropertyOfSugarContainingMolecules(true);
 
-                    //TODO
+                    try {
+                        moleculeToProcess = removeLinearSugars(moleculeToProcess, false);
+                    } catch (CloneNotSupportedException e) {
+                        e.printStackTrace();
+                        return processedMolecules;
+                    }
 
                 }
                 if (submittedMoleculeData.getSugarsToRemove().contains("terminalLnearSugars")) {
 
                     molecule.sugarsToRemove.add("terminalLinear");
-                    //TODO
-
                     setRemoveOnlyTerminalSugars(true);
+                    setRemoveLinearSugarsInRing(false);
+                    setPropertyOfSugarContainingMolecules(true);
 
+                    try {
+                        moleculeToProcess = removeLinearSugars(moleculeToProcess, false);
+                    } catch (CloneNotSupportedException e) {
+                        e.printStackTrace();
+                        return processedMolecules;
+                    }
+
+
+                }
+
+
+                //add to the list to return
+                try {
+                    //the molecule to process can be in several parts: need to separate them
+                    List<IAtomContainer> listAC = mcc.checkConnectivity(moleculeToProcess);
+                    if(listAC.size()>1){
+                        for(IAtomContainer moiety : listAC){
+                            molecule.deglycosylatedMoietiesSmiles.add(smilesGenerator.create(moiety));
+                        }
+
+                    }else{
+                        molecule.deglycosylatedMoietiesSmiles.add(smilesGenerator.create(moleculeToProcess));
+                    }
+
+
+
+                } catch (CDKException e) {
+                    e.printStackTrace();
+                    return processedMolecules;
                 }
 
             }
@@ -253,24 +326,53 @@ public class SugarRemovalService {
      * @param file
      * @return
      */
-    public ArrayList<ProcessedMolecule> doWork(SubmittedMoleculeData submittedMoleculeData, MultipartFile file){
+    public ArrayList<ProcessedMolecule> doWork(SubmittedMoleculeData submittedMoleculeData, String file){
 
         prepareSugars();
 
         ArrayList<ProcessedMolecule> processedMolecules = new ArrayList<>();
 
-        //TODO create all molecules
-
-        //TODO read the file
-
+        SmilesParser smilesParser = new SmilesParser(DefaultChemObjectBuilder.getInstance());
+        SmilesGenerator smilesGenerator = new SmilesGenerator(SmiFlavor.Absolute);
 
 
-        //TODO add them
+
+            if(readerService.startService(file)){
+                //reader can start
+                readerService.doWorkWithFile();
+
+                ArrayList<IAtomContainer> readMolecules = readerService.getReadMolecules();
+
+                for(IAtomContainer moleculeAC : readMolecules){
+
+
+
+                    ProcessedMolecule molecule = new ProcessedMolecule();
+                    try {
+                        molecule.setSmiles(smilesGenerator.create(moleculeAC));
+                        //TODO remove smiles here
+
+
+                    } catch (CDKException e) {
+                        System.out.println("Failed to create SMILES for molecule");
+                        e.printStackTrace();
+                    }
+                    processedMolecules.add(molecule);
+                }
+
+            }
+            else{
+                return processedMolecules;
+            }
+
 
         return processedMolecules;
 
     }
 
+
+
+    /******************** Actual sugar removal methods *****************************/
 
     private void prepareSugars(){
         universalIsomorphismTester = new UniversalIsomorphismTester();

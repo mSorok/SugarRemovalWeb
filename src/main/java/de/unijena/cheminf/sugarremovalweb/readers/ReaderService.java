@@ -3,8 +3,10 @@ package de.unijena.cheminf.sugarremovalweb.readers;
 
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Hashtable;
 
@@ -12,11 +14,22 @@ import java.util.Hashtable;
 public class ReaderService {
 
 
-    public Hashtable<String, IAtomContainer> molecules;
+
+    public ArrayList<IAtomContainer> readMolecules;
 
     public File molecularFile;
 
     private String submittedFileFormat ;
+
+
+
+    public File multipartToFile(MultipartFile multipart) throws IllegalStateException, IOException
+    {
+        File convFile = new File( multipart.getOriginalFilename());
+        multipart.transferTo(convFile);
+        return convFile;
+    }
+
 
 
 
@@ -25,7 +38,7 @@ public class ReaderService {
 
         System.out.println("\n\n Working on: "+this.molecularFile.getAbsolutePath() + "\n\n");
 
-        boolean acceptFileFormat = acceptFile(file);
+        boolean acceptFileFormat = acceptFile(molecularFile.getName());
 
         if(acceptFileFormat){
             return true;
@@ -78,12 +91,11 @@ public class ReaderService {
             reader = new SMILESReader();
         }
 
-        this.molecules = reader.readMoleculesFromFile(this.molecularFile);
+        this.readMolecules = reader.readMoleculesFromFile(this.molecularFile);
 
     }
 
 
-    public Hashtable<String, IAtomContainer> getMolecules() {
-        return molecules;
-    }
+
+    public ArrayList<IAtomContainer> getReadMolecules(){return readMolecules; };
 }

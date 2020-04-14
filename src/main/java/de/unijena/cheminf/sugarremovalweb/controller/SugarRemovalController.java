@@ -71,7 +71,9 @@ public class SugarRemovalController {
 
         processedMolecules = sugarRemovalService.doWork(submittedMoleculeData);
 
-        //TODO is processedMolecules empty : bad molecule - send bad request
+        if(processedMolecules.isEmpty()){
+            return new ResponseEntity(processedMolecules, HttpStatus.BAD_REQUEST);
+        }
 
 
         return new ResponseEntity(processedMolecules, HttpStatus.OK);
@@ -93,9 +95,13 @@ public class SugarRemovalController {
             System.out.println(loadedFile);
 
 
-            processedMolecules = sugarRemovalService.doWork(submittedMoleculeData, file);
 
-            //TODO is processedMolecules empty : bad molecule - send bad request
+            processedMolecules = sugarRemovalService.doWork(submittedMoleculeData, loadedFile);
+            System.out.println(processedMolecules);
+
+            if(processedMolecules.isEmpty()){
+                return new ResponseEntity(processedMolecules, HttpStatus.BAD_REQUEST);
+            }
 
             return new ResponseEntity(processedMolecules, HttpStatus.OK);
         }

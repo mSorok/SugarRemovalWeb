@@ -6,6 +6,10 @@
 
     <link rel="stylesheet" href="/css/main.css" />
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
+
+    <link rel="shortcut icon" type="image/png" href="/img/favicon.png"/>
+
+
     <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-latest.min.js"></script>
 
@@ -32,6 +36,10 @@
 
 
     <div id="step1">
+
+        <p>Here write a description of the app</p>
+        <p>Add an explanation on what is a terminal sugar</p>
+        <p>Add the explanation on the glycosidic bonds option</p>
         <h2>Choose sugar removal type</h2>
 
         <div id="sugarType" >
@@ -112,12 +120,12 @@
             <form id="fileUpload">
                 <table>
                     <tr><td>Molecular file to upload :</td><td><input style="font-size: 18px; font-min-size: 100%" type="file" name="file" id="choose-file-button" /></td></tr>
-                    <tr><td><small>Accepted formats: SDF, MOL, SMILES.<br />Max number of molecules: 1000 (can be long)</small></td><td><input type="submit" value="Upload and remove sugars" onclick="submitFile(); return false;" id="files-button" /></td></tr>
+                    <tr><td><small>Accepted formats: SDF, MOL, SMILES.<br />Max number of molecules: 200 (can be long)</small></td><td><input type="submit" value="Upload and remove sugars" onclick="submitFile(); return false;" id="files-button" /></td></tr>
                 </table>
             </form>
 
             <div id="errorDivFile" class="errorDiv">
-                <p>No file submitted!</p>
+                <p>No file submitted or bad format!</p>
             </div>
             <div id="errorDivFileFormat" class="errorDiv">
                 <p>Incorrect file format. Accepted formats: SDF, MOL, SMI (SMILES)</p>

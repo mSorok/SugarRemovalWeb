@@ -25,18 +25,18 @@ import java.util.UUID;
 public class MOLReader implements IReader {
 
 
-    Hashtable<String, IAtomContainer> molecules;
+    ArrayList<IAtomContainer> molecules;
     MoleculeChecker moleculeChecker;
 
     public MOLReader(){
-        this.molecules = new Hashtable<String, IAtomContainer>();
+        this.molecules = new ArrayList<>();
         moleculeChecker = BeanUtil.getBean(MoleculeChecker.class);
     }
 
 
 
     @Override
-    public Hashtable<String, IAtomContainer> readMoleculesFromFile(File file) {
+    public ArrayList<IAtomContainer> readMoleculesFromFile(File file) {
         int count = 1;
         MolecularFormulaManipulator mfm = new MolecularFormulaManipulator();
         try{
@@ -44,7 +44,7 @@ public class MOLReader implements IReader {
             IteratingSDFReader reader = new IteratingSDFReader(new FileInputStream(file), DefaultChemObjectBuilder.getInstance());
             reader.setSkip(true);
 
-            while (reader.hasNext() && count <= 1000) {
+            while (reader.hasNext() && count <= 200) {
 
                 try {
                     IAtomContainer molecule = reader.next();
@@ -102,11 +102,9 @@ public class MOLReader implements IReader {
                             InChIGenerator gen = InChIGeneratorFactory.getInstance().getInChIGenerator(molecule, options );
                             molecule.setProperty("INCHIKEY", gen.getInchiKey());
                         }
-                        this.molecules.put(molecule.getID(), molecule);
+                        this.molecules.add(molecule);
                     }
-                    else{
-                        this.molecules.put(molecule.getID(), null);
-                    }
+
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }

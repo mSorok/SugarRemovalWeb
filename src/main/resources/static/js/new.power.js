@@ -580,3 +580,91 @@ function createDeglycosylatedMoeitiesList(listOfMoieties, processedMolecule){
 }
 
 
+
+//POUBELLE
+
+
+fetch('/molecule', {
+    method: 'post',
+    body: fileData
+}).then(function(response){
+    if (response.status !== 200) {
+        $('#waitimg').hide();
+        $(document.getElementById("errorDivFile")).slideDown();
+    }else if(response.status==200){
+
+        $(document.getElementById("errorDivFile")).slideUp();
+
+        console.log(response);
+
+
+        var resultsTableDiv = document.getElementById("resultList");
+        resultsTableDiv.innerHTML = fillResultsTable(processedMolecules);
+
+        $(document).ready( function () {
+            $('#filledTable').DataTable(
+                {
+                    dom: '<"top"if>rt<"bottom"Bp>',
+                    buttons: [
+                        'colvis',
+                        {
+                            extend: 'csv',
+                            filename: 'removed_sugars',
+                            text: 'Save results (csv)',
+                            exportOptions: {
+                                columns: [0, 3, 5 ]
+                            },
+                        },
+                        {
+                            extend: 'copy',
+                            text: 'Copy results to clipboard',
+                            exportOptions: {
+                                columns: [0, 3, 5 ]
+                            },
+                        }
+                    ],
+                    "columnDefs": [
+                        {
+                            "targets": [ 0 ], // submitted molecule smiles
+                            "visible": false
+                        },
+                        {
+                            "targets": [ 3 ], // deglycosylated moieties smiles
+                            "visible": false
+                        },
+                        {
+                            "targets": [ 5 ], // sugar smiles
+                            "visible": false
+                        }
+
+                    ],
+                    "columns": [
+                        { "width": "18%", "max-width":"20%"}, //submitted smiles
+                        { "max-width": "20%"}, //submitted structure
+                        { "max-width": "20%"}, //deglycosylated parts structure
+                        { "max-width": "20%"}, //deglycosylated parts smiles
+                        { "max-width": "20%"}, //sugars structures
+                        { "max-width": "20%"} //sugars smiles
+                    ]
+                }
+
+            );
+        } );
+
+        $(document.getElementById("resultList")).slideDown();
+        $('#waitimg').hide();
+        var offset = $(document.getElementById("resultList")).offset();
+        offset.top -= 20;
+        $('html, body').animate({
+            scrollTop: offset.top,
+        });
+
+        console.log("SUCCESS : ", processedMolecules);
+
+
+    }
+}).catch(function(err) {
+    $('#waitimg').hide();
+    $(document.getElementById("errorDivFile")).slideDown();
+});
+

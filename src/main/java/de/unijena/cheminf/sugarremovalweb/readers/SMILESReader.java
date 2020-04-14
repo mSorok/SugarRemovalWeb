@@ -26,16 +26,16 @@ import java.util.UUID;
  * Reads SMILES files, processes the molecules and inserts in database
  */
 public class SMILESReader implements IReader {
-    Hashtable<String, IAtomContainer> molecules;
+    ArrayList<IAtomContainer> molecules;
     MoleculeChecker moleculeChecker;
 
     public SMILESReader(){
-        this.molecules = new Hashtable<String, IAtomContainer>();
+        this.molecules = new ArrayList<>();
         moleculeChecker = BeanUtil.getBean(MoleculeChecker.class);
     }
 
     @Override
-    public Hashtable<String, IAtomContainer> readMoleculesFromFile(File file) {
+    public ArrayList<IAtomContainer> readMoleculesFromFile(File file) {
         int count = 1;
         String line;
         MolecularFormulaManipulator mfm = new MolecularFormulaManipulator();
@@ -43,7 +43,7 @@ public class SMILESReader implements IReader {
             LineNumberReader smilesReader = new LineNumberReader(new InputStreamReader(new FileInputStream(file)));
             System.out.println("SMILES reader creation");
 
-            while ((line = smilesReader.readLine()) != null  && count <= 1000) {
+            while ((line = smilesReader.readLine()) != null  && count <= 200) {
                 String smiles_names = line;
                 if(!line.contains("smiles")) {
                     try {
@@ -117,11 +117,9 @@ public class SMILESReader implements IReader {
 
 
                                 }
-                                this.molecules.put(molecule.getID(), molecule);
+                                this.molecules.add(molecule);
                             }
-                            else{
-                                this.molecules.put(molecule.getID(), null);
-                            }
+
                         } catch (InvalidSmilesException e) {
                             e.printStackTrace();
                             smilesReader.skip(count - 1);
@@ -137,7 +135,7 @@ public class SMILESReader implements IReader {
             System.out.println("Oops ! File not found. Please check if the -in file or -out directory is correct");
             ex.printStackTrace();
         }
-        System.out.println("Number of molecules in file : "+this.molecules.keySet().size());
+        System.out.println("Number of molecules in file : "+this.molecules.size());
         return this.molecules;
     }
 }
