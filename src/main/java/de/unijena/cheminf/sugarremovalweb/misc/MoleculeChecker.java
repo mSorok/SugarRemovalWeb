@@ -29,11 +29,11 @@ public class MoleculeChecker {
 
 
 
-    private final String[] check = {"C", "H", "N", "O", "P", "S", "Cl", "F", "As", "Se", "Br", "I", "B", "Na", "Si", "K", "Fe"};
-    private final HashSet<String> symbols2Check = new HashSet<String>(Arrays.asList(check));
+    //private final String[] check = {"C", "H", "N", "O", "P", "S", "Cl", "F", "As", "Se", "Br", "I", "B", "Na", "Si", "K", "Fe"};
+    //private final HashSet<String> symbols2Check = new HashSet<String>(Arrays.asList(check));
 
-    private final String[] forbiddenInchiKeys = {"OOHPORRAEMMMCX-UHFFFAOYSA-N"};
-    private final  HashSet<String> inchis2Check = new HashSet<String>(Arrays.asList(forbiddenInchiKeys));
+    //private final String[] forbiddenInchiKeys = {"OOHPORRAEMMMCX-UHFFFAOYSA-N"};
+    //private final  HashSet<String> inchis2Check = new HashSet<String>(Arrays.asList(forbiddenInchiKeys));
 
 
 
@@ -46,7 +46,7 @@ public class MoleculeChecker {
 
         mcc = BeanUtil.getBean(MoleculeConnectivityChecker.class);
 
-        if(!containsStrangeElements(molecule)) {
+        //if(!containsStrangeElements(molecule)) {
 
             /**
              * Checking for connectivity and selecting the biggest component
@@ -80,7 +80,7 @@ public class MoleculeChecker {
 
             // check ID
 
-            if (molecule.getID() == "" || molecule.getID() == null) {
+            /*if (molecule.getID() == "" || molecule.getID() == null) {
                 for (Object p : molecule.getProperties().keySet()) {
 
                     if (p.toString().toLowerCase().contains("id")) {
@@ -95,7 +95,7 @@ public class MoleculeChecker {
                 }
 
 
-            }
+            }*/
 
 
             //ElectronDonation model = ElectronDonation.cdk();
@@ -118,7 +118,7 @@ public class MoleculeChecker {
             }
 
 
-            SmilesGenerator sg = new SmilesGenerator(SmiFlavor.Absolute);
+            /*SmilesGenerator sg = new SmilesGenerator(SmiFlavor.Absolute);
             SmilesParser sp = new SmilesParser(DefaultChemObjectBuilder.getInstance());
             Map<Object, Object> properties = molecule.getProperties();
             String id = molecule.getID();
@@ -129,7 +129,7 @@ public class MoleculeChecker {
                 molecule.setID(id);
             } catch (CDKException e) {
                 e.printStackTrace();
-            }
+            }*/
 
 
             // Addition of implicit hydrogens & atom typer
@@ -147,16 +147,16 @@ public class MoleculeChecker {
             }
 
 
-            CDKHydrogenAdder adder = CDKHydrogenAdder.getInstance(molecule.getBuilder() );
+            /*CDKHydrogenAdder adder = CDKHydrogenAdder.getInstance(molecule.getBuilder() );
 
             try {
                 adder.addImplicitHydrogens(molecule);
             } catch (CDKException e) {
                 e.printStackTrace();
-            }
+            }*/
 
-            AtomContainerManipulator.convertImplicitToExplicitHydrogens(molecule);
-            AtomContainerManipulator.removeNonChiralHydrogens(molecule);
+            //AtomContainerManipulator.convertImplicitToExplicitHydrogens(molecule);
+            //AtomContainerManipulator.removeNonChiralHydrogens(molecule);
 
 
 
@@ -174,23 +174,22 @@ public class MoleculeChecker {
 
 
             //Fixing molecular bonds
-            try {
+            /*try {
                 Kekulization.kekulize(molecule);
 
             } catch (CDKException e1) {
                 //e1.printStackTrace();
             } catch (IllegalArgumentException e) {
                 //System.out.println("Could not kekulize molecule "+ this.molecule.getID());
-            }
+            }*/
 
             return molecule;
-        }
-        return null;
+
     }
 
 
 
-    private boolean containsStrangeElements(IAtomContainer molecule) {
+    /*private boolean containsStrangeElements(IAtomContainer molecule) {
         if(molecule.getAtomCount()>0) {
             for (IAtom atom : molecule.atoms()) {
                 if (!symbols2Check.contains(atom.getSymbol())) {
@@ -202,16 +201,16 @@ public class MoleculeChecker {
             }
         }
         return false;
-    }
+    }*/
 
-    public boolean isForbiddenMolecule(IAtomContainer molecule){
+    /*public boolean isForbiddenMolecule(IAtomContainer molecule){
         String inchikey = molecule.getProperty("INCHIKEY");
         if(inchis2Check.contains(inchikey)){
             return true;
         }
         return false;
 
-    }
+    }*/
 
 
 }

@@ -5,12 +5,16 @@
     <title>Sugar Removal Service</title>
 
     <link rel="stylesheet" href="/css/main.css" />
+
+
+
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
 
     <link rel="shortcut icon" type="image/png" href="/img/favicon.png"/>
 
 
-    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Manrope&display=swap" rel="stylesheet">
+
     <script src="https://code.jquery.com/jquery-latest.min.js"></script>
 
     <script src="https://www.lactame.com/lib/openchemlib/5.6.1/openchemlib-full.js"></script>
@@ -37,10 +41,20 @@
 
     <div id="step1">
 
-        <p>Here write a description of the app</p>
-        <p>Add an explanation on what is a terminal sugar</p>
-        <p>Add the explanation on the glycosidic bonds option</p>
-        <h2>Choose sugar removal type</h2>
+        <div id="introduction">
+            <p>"Sugar" is a general term that refers to a carbohydrate with a molecular formula Cn(H2O)n.
+                Despite being one of the most typical substructures in molecules produced by living organisms, they do not affect the principal activity of the aglycon.
+                Moreover, their highly redundant structures can prevent from the efficient understanding of the main biological activities of the molecule.
+            This application allows to computationally remove sugar structures from the submitted molecules. Different options are available: removal of all sugars, removal of only ring sugars or only linear sugars, and removal of only terminal ring and terminal linear sugars.
+            Here, a terminal sugar is defined as a substructure that, when removed, does not split the parent structure in two or more disconnected substructures. </p>
+            <p>It is also possible to remove only sugars that are connected to the parent structure by a glycosidic bond.</p>
+            <p></p>
+            <p>The Sugar Remover Service is developed and maintained by the <a target="_blank" rel="noopener noreferrer"  href="https://cheminf.uni-jena.de" style="color: cornflowerblue">Steinbeck group</a> at the University Friedrich-Schiller in Jena, Germany.</p>
+        </div>
+
+
+
+        <h2 style="margin-left: 2%;">Choose sugar removal type</h2>
 
         <div id="sugarType" >
 
@@ -53,22 +67,22 @@
                     <col style="width: 18%">
                 </colgroup>
                 <tr style="text-align: center;">
-                    <td><img src="/img/molAllSugars.png" style="height:85px;width: 160px;alignment: center;"/></td>
-                    <td><img src="/img/molAllRingSugars.png" style="height:85px;width: 160px;alignment: center;"/></td>
-                    <td><img src="/img/molAllTerminalRingSugars.png" style="height:85px;width: 160px;alignment: center;"/></td>
-                    <td><img src="/img/molAllLinearSugars.png" style="height:85px;width: 160px;alignment: center;"/></td>
-                    <td><img src="/img/molLinearTerminalSugars.png" style="height:85px;width: 160px;alignment: center;"/></td>
+                    <td style="alignment: center;"><img src="/img/molAllSugars.png" style="height:148px;width: 160px;alignment: center;"/></td>
+                    <td style="alignment: center;"><img src="/img/molAllRingSugars.png" style="height:148px;width: 160px;alignment: center;"/></td>
+                    <td style="alignment: center;"><img src="/img/molAllTerminalRingSugars.png" style="height:148px;width: 160px;alignment: center;"/></td>
+                    <td style="alignment: center;"><img src="/img/molAllLinearSugars.png" style="height:148px;width: 160px;alignment: center;"/></td>
+                    <td style="alignment: center;"><img src="/img/molLinearTerminalSugars.png" style="height:148px;width: 160px;alignment: center;"/></td>
                 </tr>
                 <tr>
-                    <td><input class="cbSugarType" type="checkbox" name="All" id="stAll" onchange="uncheckPickingBoxes(this)"/><label for = "stAll">Remove all sugars &nbsp;&nbsp;</label> </td>
+                    <td style="alignment: center;"><input class="cbSugarType" type="checkbox" name="All" id="stAll" onchange="uncheckPickingBoxes(this)"/><label for = "stAll">Remove all sugars &nbsp;&nbsp;</label> </td>
 
-                    <td><input class="cbSugarType" type="checkbox" name="OnlyRings" id="stOnlyRings" onchange="uncheckAllAndTerminalRingCheckbox(this)"/><label for = "stOnlyRings">Remove all ring sugars</label></td>
+                    <td style="alignment: center;"><input class="cbSugarType" type="checkbox" name="OnlyRings" id="stOnlyRings" onchange="uncheckAllAndTerminalRingCheckbox(this)"/><label for = "stOnlyRings">Remove all ring sugars</label></td>
 
-                    <td><input class="cbSugarType" type="checkbox" name="OnlyTerminalRings" id="stOnlyTermRings" onchange="unckeckAllAndRingCheckbox(this)"/> <label for = "stOnlyTermRings">Remove terminal ring sugars</label></td>
+                    <td style="alignment: center;"><input class="cbSugarType" type="checkbox" name="OnlyTerminalRings" id="stOnlyTermRings" onchange="unckeckAllAndRingCheckbox(this)"/> <label for = "stOnlyTermRings">Remove terminal ring sugars</label></td>
 
-                    <td><input class="cbSugarType" type="checkbox" name="OnlyLinear" id="stOnlyLinear" onchange="uncheckAllAndTerminalLinearCheckbox(this)"/><label for = "stOnlyLinear">Remove all linear sugars</label></td>
+                    <td style="alignment: center;"><input class="cbSugarType" type="checkbox" name="OnlyLinear" id="stOnlyLinear" onchange="uncheckAllAndTerminalLinearCheckbox(this)"/><label for = "stOnlyLinear">Remove all linear sugars</label></td>
 
-                    <td><input class="cbSugarType" type="checkbox" name="OnlyTerminalLinear" id="stOnlyTermLinear" onchange="uncheckAllAndLinearCheckbox(this)"/><label for = "stOnlyTermLinear">Remove all terminal linear sugars</label></td>
+                    <td style="alignment: center;"><input class="cbSugarType" type="checkbox" name="OnlyTerminalLinear" id="stOnlyTermLinear" onchange="uncheckAllAndLinearCheckbox(this)"/><label for = "stOnlyTermLinear">Remove all terminal linear sugars</label></td>
 
                 </tr>
                 <tr>
@@ -82,7 +96,7 @@
                 <tr style="text-align: center;">
                     <td></td>
                     <td></td>
-                    <td><button class="choose-submission-type-button" onclick="fillSugarRemovalParams(this)" >&nbsp;&nbsp;&nbsp;Next: choose submission type&nbsp;&nbsp;&nbsp;</button></td>
+                    <td><button class="choose-submission-type-button" onclick="fillSugarRemovalParams(this)" >Next</button></td>
                     <td></td>
                     <td></td>
                 </tr>
@@ -99,7 +113,7 @@
 
 
     <div id="step2" style="display: none ;">
-        <h2>Select molecule input type</h2>
+        <h2 style="margin-left: 2%;">Select molecule input type</h2>
 
         <div  id="submissionType">
             <table align="center" style="table-layout: fixed;">
@@ -115,7 +129,7 @@
     <div id="step3" > <!--Molecule input and submission-->
         <div id="submitFile"  style="display: none ; ">
 
-            <h2 style="margin-left: 0px;">Upload a file</h2>
+            <h2>Upload a file</h2>
 
             <form id="fileUpload">
                 <table>
@@ -123,6 +137,7 @@
                     <tr><td><small>Accepted formats: SDF, MOL, SMILES.<br />Max number of molecules: 200 (can be long)</small></td><td><input type="submit" value="Upload and remove sugars" onclick="submitFile(); return false;" id="files-button" /></td></tr>
                 </table>
             </form>
+            Link to download the standalone application JAR
 
             <div id="errorDivFile" class="errorDiv">
                 <p>No file submitted or bad format!</p>
@@ -135,7 +150,7 @@
         </div>
 
         <div id="smilesSubmission" style="display: none ; ">
-            <h2 style="margin-left: 0px;">Submit SMILES</h2>
+            <h2>Submit SMILES</h2>
             <table>
                 <tr><td>SMILES: </td><td><textarea id="smilesTextArea" type="text" cols="100" size="100" /></textarea></td></tr>
                 <tr><td><small>All SMILES types accepted but stereochemistry and isotopes will be ignored</small></td><td><button class="submit-smiles-button"  onclick="submitSMILES(this)">Upload and remove sugars</button> </td></tr>
@@ -148,7 +163,7 @@
         </div>
 
         <div id="oclContainer"  style="display: none ; ">
-            <h2 style="margin-left: 0px;">Draw a molecule</h2>
+            <h2>Draw a molecule</h2>
 
             <div id="superEditor"></div>
 
@@ -164,6 +179,7 @@
     </div>
 
     <div id="step4">
+
         <!--<div id="resultsText"></div>-->
         <div id="resultList" style="display: none ; "></div>
     </div>

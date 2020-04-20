@@ -66,8 +66,8 @@ public class SugarRemovalController {
     @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<ArrayList<ProcessedMolecule>> catchMoleculeAndParameters(@RequestBody SubmittedMoleculeData submittedMoleculeData){
 
-        System.out.println(submittedMoleculeData.getDataString());
-        System.out.println(submittedMoleculeData.getSugarsToRemove());
+        //System.out.println(submittedMoleculeData.getDataString());
+        //System.out.println(submittedMoleculeData.getSugarsToRemove());
 
         processedMolecules = sugarRemovalService.doWork(submittedMoleculeData);
 
@@ -85,19 +85,19 @@ public class SugarRemovalController {
     public ResponseEntity<ArrayList<ProcessedMolecule>>  catchUploadedFileAndParameters(@RequestPart("submittedMoleculeData") SubmittedMoleculeData submittedMoleculeData,
                        @RequestPart("file") MultipartFile file) {
 
-        System.out.println(submittedMoleculeData.getDataString());
-        System.out.println(submittedMoleculeData.getSugarsToRemove());
+        //System.out.println(submittedMoleculeData.getDataString());
+        //System.out.println(submittedMoleculeData.getSugarsToRemove());
 
 
         if(!file.isEmpty()) {
             storageService.store(file);
             String loadedFile = "upload-dir/" + file.getOriginalFilename();
-            System.out.println(loadedFile);
+            //System.out.println(loadedFile);
 
 
 
             processedMolecules = sugarRemovalService.doWork(submittedMoleculeData, loadedFile);
-            System.out.println(processedMolecules);
+            //System.out.println(processedMolecules);
 
             if(processedMolecules.isEmpty()){
                 return new ResponseEntity(processedMolecules, HttpStatus.BAD_REQUEST);
@@ -156,108 +156,5 @@ public class SugarRemovalController {
         return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,
                 "attachment; filename=\"" + file.getFilename() + "\"").body(file);
     }
-
-
-
-
-
-    /*
-
-    @PostMapping(value="/sugarParameters", consumes = {MediaType.APPLICATION_JSON_VALUE})
-    public String setSugarRemovalParameters(@RequestBody  String paramString){
-
-        sugarRemovalParameters = new ArrayList<>();
-        String [] splittedParams = paramString.split("zzz");
-        for(String p : splittedParams){
-            sugarRemovalParameters.add(p);
-        }
-
-        System.out.println(sugarRemovalParameters);
-
-        return "redirect:/";
-    }
-
-
-    @PostMapping(value="/smiles", consumes = {MediaType.TEXT_PLAIN_VALUE} )
-    public String readMoleculeFromSMILES(@RequestBody String smiles) {
-
-        try {
-
-            smiles = smiles.replace("\n", "").replace("\r", "");
-
-
-            smiles = smiles.split("smiles=")[1];
-
-
-            boolean acceptMolecule = userInputMoleculeReaderService.verifySMILES(smiles);
-
-            if(acceptMolecule){
-
-                String smifile = userInputMoleculeReaderService.transformToSMI(smiles);
-
-                //TODO
-                //create new ProcessedMolecule object with all the parameters
-
-            }
-            else{
-                //TODO NO SMILES - return error
-                // make the divs visible!
-                //in the inxex, for every div, if th: someting is not null - show, otherwise, hide
-            }
-
-
-            return "redirect:/results";
-
-
-        } catch (ArrayIndexOutOfBoundsException exception) {
-            return "redirect:/";
-        }
-
-
-
-    }
-
-
-    *//**
-     *
-     * @param mol String
-     * @param redirectAttributes
-     * @return
-     *//*
-    @PostMapping(value="/drawing", consumes = {MediaType.APPLICATION_JSON_VALUE} )
-    public String readMoleculeFromSketcher(@RequestBody String mol, RedirectAttributes redirectAttributes) {
-        System.out.println("in drawn function");
-
-        System.out.println(mol);
-        //do things on molecule
-        //save as molfile
-
-        String molfile = userInputMoleculeReaderService.transformToMOL(mol);
-
-
-        boolean acceptMolecule = true; //accept molecule function to write
-
-        return "";
-    }
-
-
-
-
-    @GetMapping("/results")
-    public String showResults(Model model){
-
-
-        return "results";
-
-
-    }
-
-
-            */
-
-
-
-
-
 
 }

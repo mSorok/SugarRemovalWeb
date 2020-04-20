@@ -11,6 +11,9 @@ public class ProcessedMolecule {
     IAtomContainer molecule;
 
     public String smiles;
+    public String displaySmiles;
+
+    public boolean sugarWasRemoved = false;
 
     ArrayList<IAtomContainer> sugarMoietiesRemoved;
 
@@ -21,6 +24,8 @@ public class ProcessedMolecule {
     public ArrayList<String> deglycosylatedMoietiesSmiles;
 
     String submittedDataType;
+
+    String inchikey;
 
 
     public ArrayList<String> getSugarsToRemove() {
@@ -85,5 +90,29 @@ public class ProcessedMolecule {
 
     public void setDeglycosylatedMoietiesSmiles(ArrayList<String> deglycosylatedMoietiesSmiles) {
         this.deglycosylatedMoietiesSmiles = deglycosylatedMoietiesSmiles;
+    }
+
+    public String getInchikey() {
+        return inchikey;
+    }
+
+    public void setInchikey(String inchikey) {
+        this.inchikey = inchikey;
+    }
+
+    public String getDisplaySmiles() {
+        return displaySmiles;
+    }
+
+    public void setDisplaySmiles(String displaySmiles) {
+        this.displaySmiles = displaySmiles;
+    }
+
+    public boolean isSugarWasRemoved() {
+        return sugarWasRemoved;
+    }
+
+    public void setSugarWasRemoved(boolean sugarWasRemoved) {
+        this.sugarWasRemoved = sugarWasRemoved;
     }
 }

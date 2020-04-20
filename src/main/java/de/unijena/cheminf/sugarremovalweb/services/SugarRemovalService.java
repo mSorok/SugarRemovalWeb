@@ -9,11 +9,15 @@ import de.unijena.cheminf.sugarremovalweb.misc.MoleculeConnectivityChecker;
 import de.unijena.cheminf.sugarremovalweb.model.ProcessedMolecule;
 import de.unijena.cheminf.sugarremovalweb.model.SubmittedMoleculeData;
 import de.unijena.cheminf.sugarremovalweb.readers.ReaderService;
+import net.sf.jniinchi.INCHI_OPTION;
+import org.apache.tomcat.jni.Proc;
 import org.openscience.cdk.DefaultChemObjectBuilder;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.exception.InvalidSmilesException;
 import org.openscience.cdk.graph.ConnectivityChecker;
 import org.openscience.cdk.graph.GraphUtil;
+import org.openscience.cdk.inchi.InChIGenerator;
+import org.openscience.cdk.inchi.InChIGeneratorFactory;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
@@ -129,6 +133,209 @@ public class SugarRemovalService {
 
 
 
+    ProcessedMolecule removeSugarsFromAtomContainer(IAtomContainer  moleculeToProcess, SubmittedMoleculeData submittedMoleculeData){
+
+
+        ProcessedMolecule molecule = new ProcessedMolecule();
+
+        SmilesGenerator smilesGenerator = new SmilesGenerator(SmiFlavor.Unique);
+
+        List options = new ArrayList();
+        options.add(INCHI_OPTION.SNon);
+        options.add(INCHI_OPTION.ChiralFlagOFF);
+        options.add(INCHI_OPTION.AuxNone);
+
+
+
+        if(submittedMoleculeData.getDataString() != null && submittedMoleculeData.getDataString() != "") {
+            molecule.setSmiles(submittedMoleculeData.getDataString());
+        }else{
+            try {
+                molecule.setSmiles(smilesGenerator.create(moleculeToProcess));
+            } catch (CDKException e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+        //molecule.setMolecule(moleculeToProcess);
+        molecule.sugarsToRemove = new ArrayList<>();
+        molecule.deglycosylatedMoietiesSmiles = new ArrayList<>();
+
+        InChIGenerator gen = null;
+        try {
+            gen = InChIGeneratorFactory.getInstance().getInChIGenerator(moleculeToProcess, options );
+
+            molecule.setInchikey(gen.getInchiKey());
+
+
+            //Removing sugars according to params
+            if(!submittedMoleculeData.getSugarsToRemove().isEmpty()) {
+
+                if (submittedMoleculeData.getSugarsToRemove().contains("allSugars")) {//remove all the sugars
+                    molecule.sugarsToRemove.add("all");
+
+                    setRemoveLinearSugarsInRing(false);
+                    setPropertyOfSugarContainingMolecules(true);
+
+                    if (submittedMoleculeData.getSugarsToRemove().contains("allSugarsWithGlyBonds")) {
+                        setDetectGlycosidicBond(true);
+                        molecule.sugarsToRemove.add("withGlyBonds");
+                    }
+                    else{
+                        setDetectGlycosidicBond(false);
+                    }
+
+                    try {
+                        moleculeToProcess = removeAllSugars(moleculeToProcess, false);
+                        //the molecule to process can be in several parts: need to separate them
+                        List<IAtomContainer> listAC = mcc.checkConnectivity(moleculeToProcess);
+                        if(listAC.size()>1){
+                            for(IAtomContainer moiety : listAC){
+                                molecule.deglycosylatedMoietiesSmiles.add(smilesGenerator.create(moiety));
+                            }
+
+                        }else{
+                            molecule.deglycosylatedMoietiesSmiles.add(smilesGenerator.create(moleculeToProcess));
+                        }
+
+
+                    } catch (CloneNotSupportedException | CDKException e) {
+                        e.printStackTrace();
+                        return null;
+                    }
+
+                } else { //do the removal à la carte
+
+                    if (submittedMoleculeData.getSugarsToRemove().contains("ringSugars")) {
+
+                        molecule.sugarsToRemove.add("ring");
+
+                        setRemoveOnlyTerminalSugars(false);
+
+                        setRemoveLinearSugarsInRing(false);
+                        setPropertyOfSugarContainingMolecules(true);
+
+                        if (submittedMoleculeData.getSugarsToRemove().contains("ringsWithGlyBonds")) {
+                            setDetectGlycosidicBond(true);
+                            molecule.sugarsToRemove.add("withGlyBonds");
+                        }else{
+                            setDetectGlycosidicBond(false);
+                        }
+
+
+                        try {
+                            moleculeToProcess = removeCircularSugars(moleculeToProcess, false);
+                        } catch (CloneNotSupportedException e) {
+                            e.printStackTrace();
+                            return null;
+                        }
+
+
+                    }
+                    if (submittedMoleculeData.getSugarsToRemove().contains("terminalRingSugars")) {
+
+                        molecule.sugarsToRemove.add("terminalRing");
+
+                        setRemoveOnlyTerminalSugars(true);
+
+                        setRemoveLinearSugarsInRing(false);
+                        setPropertyOfSugarContainingMolecules(true);
+
+                        if (submittedMoleculeData.getSugarsToRemove().contains("termRingsWithGlyBonds")) {
+                            molecule.sugarsToRemove.add("withGlyBonds");
+                            setDetectGlycosidicBond(true);
+                        }
+
+
+                        try {
+                            moleculeToProcess = removeCircularSugars(moleculeToProcess, false);
+                        } catch (CloneNotSupportedException e) {
+                            e.printStackTrace();
+                            return null;
+                        }
+
+                    }
+                    if (submittedMoleculeData.getSugarsToRemove().contains("linearSugars")) {
+                        molecule.sugarsToRemove.add("linear");
+                        setRemoveOnlyTerminalSugars(false);
+                        setRemoveLinearSugarsInRing(false);
+                        setPropertyOfSugarContainingMolecules(true);
+
+                        try {
+                            moleculeToProcess = removeLinearSugars(moleculeToProcess, false);
+                        } catch (CloneNotSupportedException e) {
+                            e.printStackTrace();
+                            return null;
+                        }
+
+                    }
+                    if (submittedMoleculeData.getSugarsToRemove().contains("terminalLnearSugars")) {
+
+                        molecule.sugarsToRemove.add("terminalLinear");
+                        setRemoveOnlyTerminalSugars(true);
+                        setRemoveLinearSugarsInRing(false);
+                        setPropertyOfSugarContainingMolecules(true);
+
+                        try {
+                            moleculeToProcess = removeLinearSugars(moleculeToProcess, false);
+                        } catch (CloneNotSupportedException e) {
+                            e.printStackTrace();
+                            return null;
+                        }
+                    }
+
+
+                    //add to the list to return
+                    try {
+                        //the molecule to process can be in several parts: need to separate them
+                        List<IAtomContainer> listAC = mcc.checkConnectivity(moleculeToProcess);
+
+                        if(listAC.size()>1){
+                            for(IAtomContainer moiety : listAC){
+                                molecule.deglycosylatedMoietiesSmiles.add(smilesGenerator.create(moiety));
+                            }
+
+                        }else{
+                            molecule.deglycosylatedMoietiesSmiles.add(smilesGenerator.create(moleculeToProcess));
+                        }
+
+                        //check if any sugar was removed
+                        if(!molecule.getSmiles().equals(molecule.deglycosylatedMoietiesSmiles.get(0))){
+                            molecule.sugarWasRemoved=true;
+                        }
+
+
+
+                    } catch (CDKException e) {
+                        e.printStackTrace();
+                        return null;
+                    }
+
+                }
+            }else{
+                return null;
+            }
+
+        } catch (CDKException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+        //add a nice way of dealing with long smiles
+
+
+        molecule.displaySmiles = molecule.smiles.replaceAll("(.{40})", "$0 ").trim();
+
+
+
+
+
+        return molecule;
+    }
+
+
+
+
     /**
      * Processes the molecules submitted as a SMILES string or a draw (also SMILES)
      * @param submittedMoleculeData
@@ -141,179 +348,32 @@ public class SugarRemovalService {
         prepareSugars();
 
         SmilesParser smilesParser = new SmilesParser(DefaultChemObjectBuilder.getInstance());
-        SmilesGenerator smilesGenerator = new SmilesGenerator(SmiFlavor.Absolute);
 
-        ProcessedMolecule molecule = new ProcessedMolecule();
         IAtomContainer moleculeToProcess = null;
 
         //Reading SMILES
         try {
+            //remove the weird characters
+            String smilesToParse = submittedMoleculeData.getDataString();
+            smilesToParse = smilesToParse.replace("\"", "");
+            smilesToParse = smilesToParse.replace("\'", "");
+            submittedMoleculeData.setDataString(smilesToParse);
             moleculeToProcess = smilesParser.parseSmiles(submittedMoleculeData.getDataString());
 
-            molecule.setSmiles(submittedMoleculeData.getDataString());
-            //molecule.setMolecule(moleculeToProcess);
-            molecule.sugarsToRemove = new ArrayList<>();
-            molecule.deglycosylatedMoietiesSmiles = new ArrayList<>();
+            ProcessedMolecule processedMolecule = removeSugarsFromAtomContainer(moleculeToProcess, submittedMoleculeData);
 
 
-        } catch (InvalidSmilesException e) {
-            e.printStackTrace();
-            //continue;
-        }
-
-
-
-
-
-        //Removing sugars according to params
-        if(!submittedMoleculeData.getSugarsToRemove().isEmpty()) {
-
-            if (submittedMoleculeData.getSugarsToRemove().contains("allSugars")) {//remove all the sugars
-                molecule.sugarsToRemove.add("all");
-
-                setRemoveLinearSugarsInRing(false);
-                setPropertyOfSugarContainingMolecules(true);
-
-                if (submittedMoleculeData.getSugarsToRemove().contains("allSugarsWithGlyBonds")) {
-                    setDetectGlycosidicBond(true);
-                    molecule.sugarsToRemove.add("withGlyBonds");
-                }
-                else{
-                    setDetectGlycosidicBond(false);
-                }
-
-                try {
-                    moleculeToProcess = removeAllSugars(moleculeToProcess, false);
-                    //the molecule to process can be in several parts: need to separate them
-                    List<IAtomContainer> listAC = mcc.checkConnectivity(moleculeToProcess);
-                    if(listAC.size()>1){
-                        for(IAtomContainer moiety : listAC){
-                            molecule.deglycosylatedMoietiesSmiles.add(smilesGenerator.create(moiety));
-                        }
-
-                    }else{
-                        molecule.deglycosylatedMoietiesSmiles.add(smilesGenerator.create(moleculeToProcess));
-                    }
-
-
-                } catch (CloneNotSupportedException | CDKException e) {
-                    e.printStackTrace();
-                    return processedMolecules;
-                }
-
-            } else { //do the removal à la carte
-
-                if (submittedMoleculeData.getSugarsToRemove().contains("ringSugars")) {
-
-                    molecule.sugarsToRemove.add("ring");
-
-                    setRemoveOnlyTerminalSugars(false);
-
-                    setRemoveLinearSugarsInRing(false);
-                    setPropertyOfSugarContainingMolecules(true);
-
-                    if (submittedMoleculeData.getSugarsToRemove().contains("ringsWithGlyBonds")) {
-                        setDetectGlycosidicBond(true);
-                        molecule.sugarsToRemove.add("withGlyBonds");
-                    }else{
-                        setDetectGlycosidicBond(false);
-                    }
-
-
-                    try {
-                        moleculeToProcess = removeCircularSugars(moleculeToProcess, false);
-                    } catch (CloneNotSupportedException e) {
-                        e.printStackTrace();
-                        return processedMolecules;
-                    }
-
-
-                }
-                if (submittedMoleculeData.getSugarsToRemove().contains("terminalRingSugars")) {
-
-                    molecule.sugarsToRemove.add("terminalRing");
-
-                    setRemoveOnlyTerminalSugars(true);
-
-                    setRemoveLinearSugarsInRing(false);
-                    setPropertyOfSugarContainingMolecules(true);
-
-                    if (submittedMoleculeData.getSugarsToRemove().contains("termRingsWithGlyBonds")) {
-                        molecule.sugarsToRemove.add("withGlyBonds");
-                        setDetectGlycosidicBond(true);
-                    }
-
-
-                    try {
-                        moleculeToProcess = removeCircularSugars(moleculeToProcess, false);
-                    } catch (CloneNotSupportedException e) {
-                        e.printStackTrace();
-                        return processedMolecules;
-                    }
-
-                }
-                if (submittedMoleculeData.getSugarsToRemove().contains("linearSugars")) {
-                    molecule.sugarsToRemove.add("linear");
-                    setRemoveOnlyTerminalSugars(false);
-                    setRemoveLinearSugarsInRing(false);
-                    setPropertyOfSugarContainingMolecules(true);
-
-                    try {
-                        moleculeToProcess = removeLinearSugars(moleculeToProcess, false);
-                    } catch (CloneNotSupportedException e) {
-                        e.printStackTrace();
-                        return processedMolecules;
-                    }
-
-                }
-                if (submittedMoleculeData.getSugarsToRemove().contains("terminalLnearSugars")) {
-
-                    molecule.sugarsToRemove.add("terminalLinear");
-                    setRemoveOnlyTerminalSugars(true);
-                    setRemoveLinearSugarsInRing(false);
-                    setPropertyOfSugarContainingMolecules(true);
-
-                    try {
-                        moleculeToProcess = removeLinearSugars(moleculeToProcess, false);
-                    } catch (CloneNotSupportedException e) {
-                        e.printStackTrace();
-                        return processedMolecules;
-                    }
-
-
-                }
-
-
-                //add to the list to return
-                try {
-                    //the molecule to process can be in several parts: need to separate them
-                    List<IAtomContainer> listAC = mcc.checkConnectivity(moleculeToProcess);
-                    if(listAC.size()>1){
-                        for(IAtomContainer moiety : listAC){
-                            molecule.deglycosylatedMoietiesSmiles.add(smilesGenerator.create(moiety));
-                        }
-
-                    }else{
-                        molecule.deglycosylatedMoietiesSmiles.add(smilesGenerator.create(moleculeToProcess));
-                    }
-
-
-
-                } catch (CDKException e) {
-                    e.printStackTrace();
-                    return processedMolecules;
-                }
-
+            if(processedMolecule != null) {
+                processedMolecules.add(processedMolecule);
+            }else{
+                return processedMolecules;
             }
-        }else{
+
+        } catch (CDKException e) {
+            e.printStackTrace();
             return processedMolecules;
         }
 
-
-
-
-        //return the deglycosylated molecule
-        processedMolecules.add(molecule);
 
 
         return processedMolecules;
@@ -332,11 +392,6 @@ public class SugarRemovalService {
 
         ArrayList<ProcessedMolecule> processedMolecules = new ArrayList<>();
 
-        SmilesParser smilesParser = new SmilesParser(DefaultChemObjectBuilder.getInstance());
-        SmilesGenerator smilesGenerator = new SmilesGenerator(SmiFlavor.Absolute);
-
-
-
             if(readerService.startService(file)){
                 //reader can start
                 readerService.doWorkWithFile();
@@ -346,18 +401,10 @@ public class SugarRemovalService {
                 for(IAtomContainer moleculeAC : readMolecules){
 
 
-
-                    ProcessedMolecule molecule = new ProcessedMolecule();
-                    try {
-                        molecule.setSmiles(smilesGenerator.create(moleculeAC));
-                        //TODO remove smiles here
-
-
-                    } catch (CDKException e) {
-                        System.out.println("Failed to create SMILES for molecule");
-                        e.printStackTrace();
+                    ProcessedMolecule processedMolecule = removeSugarsFromAtomContainer(moleculeAC, submittedMoleculeData);
+                    if(processedMolecule != null) {
+                        processedMolecules.add(processedMolecule);
                     }
-                    processedMolecules.add(molecule);
                 }
 
             }
