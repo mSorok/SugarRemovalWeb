@@ -272,7 +272,6 @@ function submitSMILES(obj){
 
 
     if(smiles.trim().match(/^([^J][A-Za-z0-9%@+\-\[\]\(\)\\=#$]+)$/ig) && smiles !="" && smiles !=" "){
-        //O=C1OC2C(CCO)CCC3(C=C4C=CCC5C(C=CC(C45)C23)CCCC(C)(CC6=CC=C(N)[NH+]=C6)CC=7C=CC=C8C(=O)C9(OC19C(=O)C87)CC(=C(C)CC%10C%11=CC=[NH+]C=%12NC(NC)CC(C%12%11)CC%10)CO)NCC
 
         $(document.getElementById("errorDivSmiles")).hide();
         $('#waitimg').show();
@@ -315,7 +314,10 @@ function submitSMILES(obj){
                 $(document).ready( function () {
                     $('#filledTable').DataTable(
                         {
+                            //
                             dom: '<"top"if>rt<"bottom"Bp>',
+
+
                             buttons: [
                                 'colvis',
                                 {
@@ -323,14 +325,14 @@ function submitSMILES(obj){
                                     filename: 'removed_sugars',
                                     text: 'Save results (csv)',
                                     exportOptions: {
-                                        columns: [0, 3 ]
+                                        columns: [0, 3, 4 ]
                                     },
                                 },
                                 {
                                     extend: 'copy',
                                     text: 'Copy results to clipboard',
                                     exportOptions: {
-                                        columns: [0, 3 ]
+                                        columns: [0, 3, 4 ]
                                     },
                                 }
                             ],
@@ -342,7 +344,11 @@ function submitSMILES(obj){
                                 },
                                 {
                                     "targets": [ 3 ], // deglycosylated moieties smiles
-                                    "visible": true
+                                    "visible": false
+                                },
+                                {
+                                    "targets": [ 4 ], // sugar was removed
+                                    "visible": true,
                                 }
 
                             ],
@@ -351,6 +357,7 @@ function submitSMILES(obj){
                                 { "width": "250px"}, //submitted structure
                                 { "width": "250px"}, //deglycosylated parts structure
                                 { "max-width": "20%"}, //deglycosylated parts smiles
+                                {"width": "75px"}
                                 //{ "width": "250px"}, //sugars structures
                                 //{ "max-width": "20%"} //sugars smiles
                             ]
@@ -475,7 +482,11 @@ function submitDraw(obj) {
                                 },
                                 {
                                     "targets": [ 3 ], // deglycosylated moieties smiles
-                                    "visible": true
+                                    "visible": false
+                                },
+                                {
+                                    "targets": [ 4 ], // sugar was removed
+                                    "visible": true,
                                 }
 
                             ],
@@ -484,6 +495,7 @@ function submitDraw(obj) {
                                 { "width": "250px"}, //submitted structure
                                 { "width": "250px"}, //deglycosylated parts structure
                                 { "max-width": "20%"}, //deglycosylated parts smiles
+                                {"width": "75px"}
                                 //{ "width": "250px"}, //sugars structures
                                 //{ "max-width": "20%"} //sugars smiles
                             ]
@@ -627,7 +639,11 @@ function submitFile(){
                             },
                             {
                                 "targets": [ 3 ], // deglycosylated moieties smiles
-                                "visible": true
+                                "visible": false
+                            },
+                            {
+                                "targets": [ 4 ], // sugar was removed
+                                "visible": true,
                             }
 
                         ],
@@ -636,6 +652,7 @@ function submitFile(){
                             { "width": "250px"}, //submitted structure
                             { "width": "250px"}, //deglycosylated parts structure
                             { "max-width": "20%"}, //deglycosylated parts smiles
+                            {"width": "75px"}
                             //{ "width": "250px"}, //sugars structures
                             //{ "max-width": "20%"} //sugars smiles
                         ]
@@ -709,7 +726,7 @@ function fillResultsTable(processedMolecules){
 
     // tableheader
     htmlText = "<h2>Results</h2><table id='filledTable' class='display'>";
-    htmlText+= "<thead><tr><th>Submitted molecule</th><th>Submitted structure</th><th>Deglycosylated moieties</th><th>Deglycosylated moieties SMILES</th></tr></thead>";
+    htmlText+= "<thead><tr><th>Submitted molecule</th><th>Submitted structure</th><th>Deglycosylated moieties</th><th>Deglycosylated moieties SMILES</th><th>Had sugar</th></tr></thead>";
 
     //table body
     htmlText+="<tbody>";
@@ -728,6 +745,9 @@ function fillResultsTable(processedMolecules){
         htmlText += "<td>";//col3
         htmlText += createDeglycosylatedMoeitiesList(processedMolecules[i].deglycosylatedMoietiesSmiles, processedMolecules[i]);
         htmlText += "</td>" ;//col3 over
+        htmlText += "<td>";//col4
+        htmlText += processedMolecules[i].sugarWasRemoved ;
+        htmlText += "</td>";// col4 over
         //htmlText += "<td  style='text-align:center;'>"; //col4
         //htmlText += createSugarMoeitiesPics(processedMolecules[i].sugarMoietiesRemovedSmiles);
         //htmlText += "</td>";//col4 over
