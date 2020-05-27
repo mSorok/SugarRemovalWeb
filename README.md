@@ -1,6 +1,9 @@
 # Single page application for the sugar removal algorithm
 
-Works as a simple docker container, to fire it up, build it first:
+Sugar units in natural products are pharmacokinetically important but often redundant and therefore obstructing the study of the main function of the aglycon. Therefore, it is recommended to remove the sugars before a theoretical or experimental study of a molecule. Deglycogenases, enzymes that specialized in sugar removal from small molecules, are often used in laboratories to perform this task. However, there is no standardized computational procedure to do it in silico.
+
+
+This web application can be fired up as a simple docker container:
 
 ```
 docker-compose build
