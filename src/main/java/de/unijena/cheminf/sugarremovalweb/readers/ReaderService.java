@@ -97,5 +97,6 @@ public class ReaderService {
 
 
 
-    public ArrayList<IAtomContainer> getReadMolecules(){return readMolecules; };
+    public ArrayList<IAtomContainer> getReadMolecules(){return readMolecules; }
+
 }

@@ -32,8 +32,9 @@
 <body>
 
 <div id="headercheminf">
-    <a target="_blank" rel="noopener noreferrer"  href="https://cheminf.uni-jena.de" ><img id="headerpic" src="/img/cheminf_logo.png"></a>
-    <h1 id="headertext">Sugar Removal Service</h1>
+    <div id="npo-pic"><a href="https://naturalproducts.net/" target="_blank"><img  src="/img/NP3_S.png" style="width:159px;height:150px;"></a></div>
+    <div id="headerpic"><a href="https://sugar.naturalproducts.net/"><img  src="/img/sru_logo.jpeg" style="width:742px;height:200px;"></a></div>
+    <!--<h1 id="headertext">Sugar Removal Utility</h1>-->
 </div>
 
 
@@ -52,8 +53,10 @@
             This application allows to computationally remove sugar structures from the submitted molecules. Different options are available: removal of all sugars, removal of only ring sugars or only linear sugars, and removal of only terminal ring and terminal linear sugars.
             Here, a terminal sugar is defined as a substructure that, when removed, does not split the parent structure in two or more disconnected substructures. </p>
             <p>It is also possible to remove only the ring sugars that are connected to the parent structure by a glycosidic bond.</p>
+
+            <p>Th command line application, with more options and parameters can be downloaded <a target="_blank" href="https://github.com/JonasSchaub/SugarRemoval/tree/master/SugarRemovalUtility%20CMD%20App" style="color: cornflowerblue">here</a></p>
             <p></p>
-            <p>The Sugar Remover Service is developed and maintained by the <a target="_blank" rel="noopener noreferrer"  href="https://cheminf.uni-jena.de" style="color: cornflowerblue">Steinbeck group</a> at the University Friedrich-Schiller in Jena, Germany.</p>
+            <p>The Sugar Remover Utility is developed and maintained by the <a target="_blank" rel="noopener noreferrer"  href="https://cheminf.uni-jena.de" style="color: cornflowerblue">Steinbeck group</a> at the University Friedrich-Schiller in Jena, Germany.</p>
         </div>
 
 
@@ -139,7 +142,7 @@
             <form id="fileUpload">
                 <table>
                     <tr><td>Molecular file to upload :</td><td><input style="font-size: 18px; font-min-size: 100%" type="file" name="file" id="choose-file-button" /></td></tr>
-                    <tr><td><small>Accepted formats: SDF, MOL, SMILES.<br />Max number of molecules: 200 (can be long)</small></td><td><input type="submit" value="Upload and remove sugars" onclick="submitFile(); return false;" id="files-button" /></td></tr>
+                    <tr><td><small>Accepted formats: SDF, MOL, SMILES.<br />Max number of molecules: 1000 (can be long)</small></td><td><input type="submit" value="Upload and remove sugars" onclick="submitFile(); return false;" id="files-button" /></td></tr>
                 </table>
             </form>
             Link to download the standalone application JAR
@@ -202,7 +205,7 @@
         <p><strong>The Sugar Removal Service is an open source web application based fully on open data. Source and installation instructions are available at <a target="_blank" rel="noopener noreferrer"  href="https://github.com/mSorok/SugarRemovalWeb" style="color: chocolate">GitHub</a>.
             Please submit bug reports, feature requests and general issues through <a target="_blank" rel="noopener noreferrer"  href="https://github.com/mSorok/NPlsWeb/issues" style="color: chocolate">the issues tracker at GitHub</a>.</strong>
             The Sugar Remover Service is developed and maintained by the <a target="_blank" rel="noopener noreferrer"  href="https://cheminf.uni-jena.de" style="color: chocolate">Steinbeck group</a> at the University Friedrich-Schiller in Jena, Germany.</p>
-        <p>The code for this web application is released under the MIT license. Data licenses, if available, can be obtained from the home page of the various natural product databases listed above.</p>
+        <p>The code for this web application is released under the MIT license.</p>
     </div>
 </div>
 
